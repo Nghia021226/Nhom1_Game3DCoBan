@@ -112,6 +112,7 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
+        private Transform originalParent;
 
         private bool IsCurrentDeviceMouse
         {
@@ -149,6 +150,8 @@ namespace StarterAssets
 #endif
 
             AssignAnimationIDs();
+
+            originalParent = transform.parent;
 
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
@@ -437,11 +440,15 @@ namespace StarterAssets
             }
             else
             {
-                // Nếu Player bước ra khỏi vùng raycast hoặc nhảy lên
                 if (currentPlatform != null)
                 {
-                    transform.SetParent(null);
+                    // SỬA DÒNG NÀY: Thay vì SetParent(null), ta trả về originalParent
+                    transform.SetParent(originalParent);
+
                     currentPlatform = null;
+
+                    // Mẹo nhỏ: Để đảm bảo Player không bị méo tỉ lệ (Scale) khi nhảy ra
+                    transform.localScale = Vector3.one;
                 }
             }
         }
