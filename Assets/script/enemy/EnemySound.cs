@@ -11,7 +11,7 @@ public class EnemySound : MonoBehaviour
     [Header("Âm thanh Tấn công")]
     [SerializeField] AudioClip attackSound; 
 
-    // --- BIẾN MỚI: Dùng để đếm giờ ---
+    
     private float lastAlertTime = -100f; // Mốc thời gian lần cuối kêu
     [SerializeField] float alertCooldown = 5f;     // Cứ 5 giây mới được kêu 1 lần
 
@@ -23,15 +23,13 @@ public class EnemySound : MonoBehaviour
 
     public void OnFootstep(AnimationEvent animationEvent)
     {
-        // Không làm gì cả -> Im lặng
+        
     }
 
     public void PlayAlertSound()
     {
         if (alertSound == null || audioSource == null) return;
 
-        // --- KIỂM TRA COOLDOWN ---
-        // Nếu thời gian hiện tại chưa vượt qua (lần cuối + 5s) thì thôi, nín
         if (Time.time < lastAlertTime + alertCooldown) return;
 
         // Cập nhật lại thời gian vừa kêu
@@ -41,8 +39,6 @@ public class EnemySound : MonoBehaviour
         audioSource.pitch = 1f;
         audioSource.PlayOneShot(alertSound, 1f);
     }
-
-    // Hàm này sẽ gọi từ Animation (giống hàm bước chân)
     public void PlayAttackSound()
     {
         if (attackSound != null && audioSource != null)

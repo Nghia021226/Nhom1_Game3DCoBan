@@ -18,21 +18,19 @@ public partial class MoveToWaypointAction : Action
 
         if (agent == null || patrolData == null)
         {
-            // Nếu quên gắn script EnemyPatrolData thì báo lỗi
             Debug.LogError("Chưa gắn script EnemyPatrolData vào Enemy kìa!");
             return Status.Failure;
         }
 
-        // 1. Kiểm tra: Nếu đang đi dở thì thôi, đi tiếp
+        // Kiểm tra: Nếu đang đi dở thì thôi, đi tiếp
         if (!agent.isStopped && agent.hasPath && agent.remainingDistance > 0.5f)
         {
             return Status.Success;
         }
 
-        // 2. Lấy điểm ngẫu nhiên từ danh sách Waypoint
         Vector3 dest = patrolData.GetRandomWaypoint();
 
-        // 3. Set đích đến
+        // Set đích đến
         agent.speed = Speed.Value;
         agent.isStopped = false;
         agent.SetDestination(dest);

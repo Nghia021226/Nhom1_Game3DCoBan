@@ -14,8 +14,8 @@ public partial class StopAgentAction : Action
         NavMeshAgent agent = GameObject.GetComponent<NavMeshAgent>();
         if (agent != null)
         {
-            agent.isStopped = true; // Ra lệnh dừng lại
-            agent.ResetPath();      // Xóa đường đi cũ
+            agent.isStopped = true; 
+            agent.ResetPath();      
         }
         return Status.Success;
     }

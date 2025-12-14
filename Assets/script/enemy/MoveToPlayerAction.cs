@@ -17,7 +17,7 @@ public partial class MoveToPlayerAction : Action
 
     private float _nextUpdatePathTime; // Biến đếm thời gian
 
-    // Biến kiểm tra để đảm bảo Start/Stop luôn đi theo cặp
+    
     private bool hasStartedChase = false;
 
     protected override Status OnStart()
@@ -33,11 +33,11 @@ public partial class MoveToPlayerAction : Action
         EnemySound soundScript = GameObject.GetComponent<EnemySound>();
         if (soundScript != null) soundScript.PlayAlertSound();
 
-        // --- XỬ LÝ NHẠC (MỚI) ---
+        
         if (MusicManager.instance != null)
         {
             MusicManager.instance.StartChase();
-            hasStartedChase = true; // Đánh dấu là đã báo nhạc rồi
+            hasStartedChase = true; 
         }
 
         agent.speed = Speed.Value;
@@ -56,9 +56,9 @@ public partial class MoveToPlayerAction : Action
         if (GameManager.instance.isPlayerHiding)
         {
             agent.ResetPath();
-            return Status.Failure; // Trả về Failure để Behavior Graph chuyển nhánh (ví dụ: Wander)
+            return Status.Failure; // Trả về Failure để Behavior Graph chuyển nhánh 
         }
-        // --------------------------------------
+        
 
         if (Time.time >= _nextUpdatePathTime)
         {
@@ -80,12 +80,9 @@ public partial class MoveToPlayerAction : Action
 
         return Status.Running;
     }
-
-    // --- HÀM MỚI QUAN TRỌNG: OnEnd ---
-    // Hàm này tự động chạy khi cái node Chase này kết thúc (dù thành công hay thất bại)
     protected override void OnEnd()
     {
-        // Nếu trước đó đã bật nhạc Chase thì giờ tắt đi
+        
         if (hasStartedChase && MusicManager.instance != null)
         {
             MusicManager.instance.StopChase();

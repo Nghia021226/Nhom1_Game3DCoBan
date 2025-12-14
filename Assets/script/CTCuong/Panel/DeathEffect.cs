@@ -11,7 +11,6 @@ public class DeathEffect : MonoBehaviour
     {
         if (BloodImage != null)
         {
-            // Reset về 0 ngay khi bảng hiện lên
             BloodImage.fillAmount = 0f;
             BloodImage.gameObject.SetActive(true);
 

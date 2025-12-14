@@ -33,7 +33,7 @@ public class PowerManager : MonoBehaviour
 
     void Start()
     {
-        // 1. TÌM ĐÈN (Code cũ - Giữ nguyên)
+        // TÌM ĐÈN 
         Light[] allLights = FindObjectsByType<Light>(FindObjectsSortMode.None);
         foreach (var l in allLights)
         {
@@ -44,8 +44,8 @@ public class PowerManager : MonoBehaviour
             mapLights.Add(l);
         }
 
-        // 2. THIẾT LẬP THỜI GIAN BAN ĐẦU
-        currentTime = firstTimeDuration; // Gán 60s cho lần đầu
+        // THIẾT LẬP THỜI GIAN BAN ĐẦU
+        currentTime = firstTimeDuration; 
         
     }
 
@@ -56,24 +56,21 @@ public class PowerManager : MonoBehaviour
         {
             if (powerTimerText != null)
             {
-                // SỬA DÒNG NÀY: Để về số 00:00 cho gọn
                 powerTimerText.text = "NGUỒN ĐIỆN: 00:00";
                 powerTimerText.color = Color.red;
             }
             return;
         }
 
-        // --- LOGIC ĐẾM NGƯỢC ---
+       
         if (currentTime > 0)
         {
             currentTime -= Time.deltaTime; // Trừ thời gian theo từng khung hình
 
-            // Cập nhật lên màn hình
             UpdateTimerUI();
         }
         else
         {
-            // Hết giờ -> Cúp điện
             currentTime = 0;
             CutPower();
         }
@@ -83,19 +80,17 @@ public class PowerManager : MonoBehaviour
     {
         if (powerTimerText == null) return;
 
-        // 1. Đổi phút : giây (Ví dụ 125s -> 02:05)
         int minutes = Mathf.FloorToInt(currentTime / 60F);
         int seconds = Mathf.FloorToInt(currentTime % 60F);
         powerTimerText.text = string.Format("NGUỒN ĐIỆN: {0:00}:{1:00}", minutes, seconds);
 
-        // 2. Đổi màu chữ
         if (currentTime <= warningThreshold)
         {
-            powerTimerText.color = Color.red; // Dưới 1 phút -> Đỏ
+            powerTimerText.color = Color.red; 
         }
         else
         {
-            powerTimerText.color = Color.green; // Còn nhiều -> Xanh
+            powerTimerText.color = Color.green; 
         }
     }
 
@@ -109,7 +104,7 @@ public class PowerManager : MonoBehaviour
 
         if (GameManager.instance) GameManager.instance.ShowHint("HỆ THỐNG SẬP! KHỞI ĐỘNG LẠI CẦU DAO.");
 
-        // ---> KÍCH HOẠT DẤU CHẤM THAN Ở ĐÂY <---
+        
         if (mainBreaker != null)
         {
             mainBreaker.ToggleMarker(true);
@@ -133,7 +128,6 @@ public class PowerManager : MonoBehaviour
         // Từ lần thứ 2 trở đi, set thời gian là 3 phút (180s)
         currentTime = normalCycleDuration;
 
-        // Cập nhật ngay lập tức để người chơi thấy màu xanh lại liền
         UpdateTimerUI();
     }
 }

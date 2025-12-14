@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine.UI;
 using Script.UI; // Bắt buộc có dòng này để gọi GameController
-using UnityEngine.SceneManagement; // Bắt buộc có để chuyển cảnh
+using UnityEngine.SceneManagement; 
 
 namespace Script.Enemy
 {
@@ -44,7 +44,7 @@ namespace Script.Enemy
             _isAttacking = false;
             _hasCheckedThisAttack = false;
 
-            // --- Setup UI ---
+            
             if (youreDeadPanel != null) youreDeadPanel.SetActive(false);
             if (restartButton != null)
             {
@@ -66,7 +66,7 @@ namespace Script.Enemy
                 QuitButton.onClick.AddListener(QuitGame); // Gắn hàm QuitGame vào
             }
 
-            // --- Setup Animator ---
+            
             if (enemyAnimator == null) enemyAnimator = GetComponent<Animator>();
             if (enemyAnimator != null)
             {
@@ -82,7 +82,7 @@ namespace Script.Enemy
                 }
             }
 
-            // --- Setup Player ---
+            
             if (player == null)
             {
                 GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -95,9 +95,9 @@ namespace Script.Enemy
         {
             if (_hasKilledPlayer) return;
 
-            // --- CÁCH MỚI: Check qua GameController (An toàn hơn) ---
+            
             if (GameController.IsGamePaused()) return;
-            // --------------------------------------------------------
+           
 
             if (enemyAnimator == null) return;
 
@@ -109,7 +109,7 @@ namespace Script.Enemy
                 isAttackParameter = enemyAnimator.GetBool(_isAttackHash);
             }
 
-            // Logic check tên animation
+            
             bool isInAttackState = isAttackParameter ||
                                    stateInfo.IsName("Attack") ||
                                    CheckStateNameContains(stateInfo, "attack");
@@ -122,7 +122,7 @@ namespace Script.Enemy
                     _hasCheckedThisAttack = false;
                 }
 
-                // Logic tính sát thương theo thời gian tùy chỉnh
+                
                 float currentTime = stateInfo.normalizedTime % 1f;
 
                 if (!_hasCheckedThisAttack && currentTime >= damageStartTime && currentTime <= damageEndTime)
@@ -141,7 +141,7 @@ namespace Script.Enemy
             }
         }
 
-        // --- Giữ nguyên các hàm phụ trợ bên dưới ---
+        
         private bool CheckStateNameContains(AnimatorStateInfo stateInfo, string keyword)
         {
             string stateName = GetCurrentStateName(stateInfo);
@@ -171,23 +171,23 @@ namespace Script.Enemy
 
         private void KillPlayer()
         {
-            // Tìm script máu của người chơi
+            
             PlayerStats stats = player.GetComponent<PlayerStats>();
 
             if (stats != null)
             {
-                // Trừ 50 máu
+                
                 stats.TakeDamage(50f);
 
-                // Đẩy người chơi ra xa chút hoặc reset attack để không bị trừ máu liên tục mỗi khung hình
-                _hasKilledPlayer = true; // Tạm dùng biến này để chặn đánh tiếp (hoặc bro viết logic cooldown)
+                
+                _hasKilledPlayer = true; 
 
-                // Logic Reset để quái đánh tiếp được sau 1-2 giây (Tùy chọn)
+                
                 Invoke("ResetAttackState", 2f);
             }
             else
             {
-                // Không có script máu thì giết luôn như cũ
+                
                 _hasKilledPlayer = true;
                 Script.UI.GameController.PauseGame(youreDeadPanel);
                 if (deathText != null) deathText.text = "YOU'RE DEAD!";
@@ -195,7 +195,7 @@ namespace Script.Enemy
         }
         void ResetAttackState()
         {
-            _hasKilledPlayer = false; // Cho phép đánh lại
+            _hasKilledPlayer = false; 
         }
 
         private void OnRestartButtonClicked()

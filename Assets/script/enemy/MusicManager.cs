@@ -6,12 +6,12 @@ public class MusicManager : MonoBehaviour
     public static MusicManager instance;
 
     [Header("Cài đặt Nhạc")]
-    [SerializeField] AudioSource bgmSource;      // Kéo cái AudioSource phát nhạc nền vào đây
-    [SerializeField] AudioClip normalMusic;      // Để Trống (None) cũng được
-    [SerializeField] AudioClip chaseMusic;       // Nhạc bị đuổi
+    [SerializeField] AudioSource bgmSource;      
+    [SerializeField] AudioClip normalMusic;      
+    [SerializeField] AudioClip chaseMusic;       
 
     [Header("Thông số (Chỉ để xem)")]
-    public int enemyChasingCount = 0;  // Đếm xem có bao nhiêu con đang đuổi
+    public int enemyChasingCount = 0;  
 
     void Awake()
     {
@@ -22,7 +22,7 @@ public class MusicManager : MonoBehaviour
 
     void Start()
     {
-        // Mới vào game: Chạy nhạc Normal (Nếu có), không có thì im lặng
+        
         SwitchMusic(normalMusic);
     }
 
@@ -38,7 +38,7 @@ public class MusicManager : MonoBehaviour
         }
     }
 
-    // Hàm này gọi khi Quái bỏ cuộc hoặc chết
+    // Hàm này gọi khi Quái bỏ cuộc 
     public void StopChase()
     {
         enemyChasingCount--;
@@ -46,20 +46,18 @@ public class MusicManager : MonoBehaviour
         // Giữ số không bao giờ âm
         if (enemyChasingCount < 0) enemyChasingCount = 0;
 
-        // Nếu KHÔNG CÒN con nào đuổi nữa -> Về nhạc Normal
+        
         if (enemyChasingCount == 0)
         {
             SwitchMusic(normalMusic);
         }
     }
 
-    // --- HÀM ĐỔI NHẠC (QUAN TRỌNG: Đã sửa lỗi xử lý Null) ---
+    
     void SwitchMusic(AudioClip newClip)
     {
         if (bgmSource == null) return;
 
-        // TRƯỜNG HỢP 1: Nếu không có nhạc (null) -> Tắt loa luôn
-        // (Đây là chỗ giúp game im lặng khi thoát khỏi quái)
         if (newClip == null)
         {
             bgmSource.Stop();
@@ -67,10 +65,8 @@ public class MusicManager : MonoBehaviour
             return;
         }
 
-        // TRƯỜNG HỢP 2: Nếu nhạc mới trùng với nhạc đang phát -> Kệ nó phát tiếp
         if (bgmSource.clip == newClip && bgmSource.isPlaying) return;
 
-        // TRƯỜNG HỢP 3: Có nhạc mới -> Bật lên
         bgmSource.clip = newClip;
         bgmSource.Play();
     }
