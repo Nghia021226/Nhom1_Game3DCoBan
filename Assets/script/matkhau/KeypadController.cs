@@ -10,29 +10,35 @@ public class KeypadController : MonoBehaviour
     public CinemachineVirtualCamera keypadCamera;
     public string correctPassword = "1997";
 
+    [Header("Âm thanh (Mới)")]
+    public AudioSource audioSource;
+    public AudioClip buttonPressSound; // Tiếng tít
+    public AudioClip successSound;     // Tiếng ting ting (đúng)
+    public AudioClip errorSound;       // Tiếng è è (sai)
+
     [Header("Kết nối")]
     public InteractableObject myInteractObject;
 
     private string currentInput = "";
     private bool isLocked = false;
-    private bool isSolved = false; // Biến mới: Đánh dấu đã giải xong chưa
+    private bool isSolved = false;
 
     void Start()
     {
         if (keypadCamera != null) keypadCamera.Priority = 0;
+
+        // Tự thêm AudioSource
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+
         UpdateScreen();
     }
 
     void Update()
     {
-        // Chỉ xử lý input khi đang dùng Keypad
         if (GameManager.instance.isUsingKeypad)
         {
-            // Chỉ dùng phím F để thoát
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                ExitKeypad();
-            }
+            if (Input.GetKeyDown(KeyCode.F)) ExitKeypad();
         }
     }
 
@@ -41,7 +47,6 @@ public class KeypadController : MonoBehaviour
         if (keypadCamera != null) keypadCamera.Priority = 20;
         GameManager.instance.ToggleKeypadMode(true);
 
-        // Nếu đã giải xong rồi thì hiện chữ OPEN luôn, không reset nữa
         if (isSolved)
         {
             screenText.text = "OPEN";
@@ -57,27 +62,25 @@ public class KeypadController : MonoBehaviour
 
     public void ExitKeypad()
     {
-        // FIX LỖI 1: Gọi Coroutine để tắt từ từ, tránh xung đột với PlayerInteraction
         StartCoroutine(ExitRoutine());
     }
 
     IEnumerator ExitRoutine()
     {
-        // 1. Hạ Priority Camera xuống trước
         if (keypadCamera != null) keypadCamera.Priority = 0;
-
-        // 2. Chờ hết frame hiện tại (Để đảm bảo PlayerInteraction không bắt dính phím F lần nữa)
         yield return new WaitForEndOfFrame();
-
-        // 3. Mới báo cho GameManager biết là đã tắt
         GameManager.instance.ToggleKeypadMode(false);
     }
 
     public void InputNumber(string num)
     {
-        // Nếu đang khóa hoặc đã giải xong rồi thì không cho nhập số nữa
         if (isLocked || isSolved) return;
         if (currentInput.Length >= 4) return;
+
+        // --- PHÁT ÂM THANH BẤM NÚT ---
+        if (audioSource != null && buttonPressSound != null)
+            audioSource.PlayOneShot(buttonPressSound);
+        // -----------------------------
 
         currentInput += num;
         UpdateScreen();
@@ -100,25 +103,28 @@ public class KeypadController : MonoBehaviour
 
         if (currentInput == correctPassword)
         {
+            // --- ÂM THANH ĐÚNG ---
+            if (audioSource != null && successSound != null)
+                audioSource.PlayOneShot(successSound);
+            // ---------------------
+
             screenText.color = Color.green;
             screenText.text = "OPEN";
-            isSolved = true; // FIX LỖI 2: Đánh dấu là xong, thay vì tắt script
+            isSolved = true;
 
             yield return new WaitForSeconds(1f);
-
             ExitKeypad();
 
-            if (myInteractObject != null)
-            {
-                myInteractObject.OpenDoorByKeypad();
-            }
-
-            // BỎ DÒNG NÀY: this.enabled = false; 
-            // Để hàm Update vẫn chạy -> Vẫn nhấn F thoát được nếu lỡ vào lại
+            if (myInteractObject != null) myInteractObject.OpenDoorByKeypad();
             isLocked = false;
         }
         else
         {
+            // --- ÂM THANH SAI ---
+            if (audioSource != null && errorSound != null)
+                audioSource.PlayOneShot(errorSound);
+            // --------------------
+
             screenText.color = Color.red;
             screenText.text = "ERROR";
 

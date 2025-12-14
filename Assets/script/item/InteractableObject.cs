@@ -6,9 +6,10 @@ public class InteractableObject : MonoBehaviour
 {
     public enum ObjectType { Item, Door, Computer, Keypad, Locker, Pet, None }
     public ObjectType type;
-
-    // --- ĐỔI TÊN Ở ĐÂY: EnergyOrb -> BlueKey ---
     public enum ItemType { None, Battery, HealthPotion, KeyCard, Chip, BlueKey, GateCard }
+
+    [Header("--- SOUND EFFECTS (Mới) ---")]
+    public AudioClip interactSound; // Kéo âm thanh nhặt/tương tác vào đây
 
     [Header("--- QUEST MARKER ---")]
     public GameObject questMarker;
@@ -50,22 +51,28 @@ public class InteractableObject : MonoBehaviour
         if (questMarker != null) questMarker.SetActive(true);
     }
 
+    // --- HÀM PHÁT ÂM THANH TIỆN LỢI ---
+    public void PlayInteractSound()
+    {
+        if (interactSound != null)
+        {
+            AudioSource.PlayClipAtPoint(interactSound, transform.position, 1f);
+        }
+    }
+    // ----------------------------------
+
     public virtual string GetHintText()
     {
         if (type == ObjectType.Item) return "Giữ E để nhặt " + specificItemType.ToString();
 
-        // --- GỢI Ý CHO PET (Dùng BlueKey) ---
         if (type == ObjectType.Pet)
         {
             if (petScript != null && petScript.isTamed) return "";
-
-            // Kiểm tra BlueKey thay vì EnergyOrb
             if (GameManager.instance.IsHoldingItem(ItemType.BlueKey))
                 return "Giữ E để Thuần Phục";
             else
                 return "Cần Chìa Khóa Xanh (Blue Key)";
         }
-        // ------------------------------------
 
         if (type == ObjectType.Locker) return "Nhấn F để trốn";
 
@@ -89,37 +96,32 @@ public class InteractableObject : MonoBehaviour
 
     public virtual void PerformAction()
     {
-        // --- FIX LỖI LOADING KHÔNG MẤT: Tắt ngay lập tức ---
         if (GameManager.instance != null)
         {
             GameManager.instance.StopLoading();
             GameManager.instance.HideHint();
         }
-        // --------------------------------------------------
 
         // 1. XỬ LÝ PET
         if (type == ObjectType.Pet)
         {
-            if (GameManager.instance.IsHoldingItem(ItemType.BlueKey)) // Check BlueKey
+            if (GameManager.instance.IsHoldingItem(ItemType.BlueKey))
             {
                 if (petScript != null)
                 {
+                    PlayInteractSound(); // Âm thanh thuần phục
                     petScript.TamePet();
                     GameManager.instance.RemoveCurrentItem();
 
                     Collider col = GetComponent<Collider>();
                     if (col != null) col.enabled = false;
-
                     if (questMarker != null) Destroy(questMarker);
 
                     GameManager.instance.ShowHint("Đã thu phục Pet!");
                     this.enabled = false;
                 }
             }
-            else
-            {
-                GameManager.instance.ShowHint("Cần trang bị Chìa Khóa Xanh!");
-            }
+            else GameManager.instance.ShowHint("Cần trang bị Chìa Khóa Xanh!");
         }
 
         // 2. XỬ LÝ TỦ
@@ -128,7 +130,7 @@ public class InteractableObject : MonoBehaviour
             if (lockerScript != null) lockerScript.EnterLocker();
         }
 
-        // 3. XỬ LÝ ITEM (Nhặt đồ)
+        // 3. XỬ LÝ ITEM (NHẶT ĐỒ)
         else if (type == ObjectType.Item)
         {
             bool success = false;
@@ -143,7 +145,11 @@ public class InteractableObject : MonoBehaviour
                 else GameManager.instance.ShowHint("Túi đồ đã đầy!");
             }
 
-            if (success) Destroy(gameObject);
+            if (success)
+            {
+                PlayInteractSound(); // <--- PHÁT ÂM THANH NHẶT ĐỒ
+                Destroy(gameObject);
+            }
         }
 
         // 4. XỬ LÝ MÁY TÍNH
@@ -151,6 +157,7 @@ public class InteractableObject : MonoBehaviour
         {
             if (GameManager.instance.IsHoldingItem(ItemType.Battery))
             {
+                PlayInteractSound(); // Âm thanh lắp pin
                 isComputerOn = true;
                 if (screenCanvas != null) screenCanvas.SetActive(true);
                 if (passwordText != null) passwordText.text = "PASSWORD\n" + passwordContent;

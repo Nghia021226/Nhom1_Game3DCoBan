@@ -2,7 +2,7 @@
 using TMPro;
 using UnityEngine.UI;
 using Script.UI; // Bắt buộc có dòng này để gọi GameController
-using UnityEngine.SceneManagement; 
+using UnityEngine.SceneManagement;
 
 namespace Script.Enemy
 {
@@ -44,29 +44,26 @@ namespace Script.Enemy
             _isAttacking = false;
             _hasCheckedThisAttack = false;
 
-            
             if (youreDeadPanel != null) youreDeadPanel.SetActive(false);
+
             if (restartButton != null)
             {
                 restartButton.onClick.RemoveAllListeners();
                 restartButton.onClick.AddListener(OnRestartButtonClicked);
             }
 
-            // 1. Nút Menu
             if (BackToMenuButton != null)
             {
-                BackToMenuButton.onClick.RemoveAllListeners(); // Xóa sạch cũ
-                BackToMenuButton.onClick.AddListener(LoadMainMenu); // Gắn hàm LoadMainMenu vào
+                BackToMenuButton.onClick.RemoveAllListeners();
+                BackToMenuButton.onClick.AddListener(LoadMainMenu);
             }
 
-            // 2. Nút Quit
             if (QuitButton != null)
             {
-                QuitButton.onClick.RemoveAllListeners(); // Xóa sạch cũ
-                QuitButton.onClick.AddListener(QuitGame); // Gắn hàm QuitGame vào
+                QuitButton.onClick.RemoveAllListeners();
+                QuitButton.onClick.AddListener(QuitGame);
             }
 
-            
             if (enemyAnimator == null) enemyAnimator = GetComponent<Animator>();
             if (enemyAnimator != null)
             {
@@ -82,7 +79,6 @@ namespace Script.Enemy
                 }
             }
 
-            
             if (player == null)
             {
                 GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -94,11 +90,7 @@ namespace Script.Enemy
         void Update()
         {
             if (_hasKilledPlayer) return;
-
-            
             if (GameController.IsGamePaused()) return;
-           
-
             if (enemyAnimator == null) return;
 
             AnimatorStateInfo stateInfo = enemyAnimator.GetCurrentAnimatorStateInfo(0);
@@ -109,7 +101,6 @@ namespace Script.Enemy
                 isAttackParameter = enemyAnimator.GetBool(_isAttackHash);
             }
 
-            
             bool isInAttackState = isAttackParameter ||
                                    stateInfo.IsName("Attack") ||
                                    CheckStateNameContains(stateInfo, "attack");
@@ -122,7 +113,6 @@ namespace Script.Enemy
                     _hasCheckedThisAttack = false;
                 }
 
-                
                 float currentTime = stateInfo.normalizedTime % 1f;
 
                 if (!_hasCheckedThisAttack && currentTime >= damageStartTime && currentTime <= damageEndTime)
@@ -141,7 +131,6 @@ namespace Script.Enemy
             }
         }
 
-        
         private bool CheckStateNameContains(AnimatorStateInfo stateInfo, string keyword)
         {
             string stateName = GetCurrentStateName(stateInfo);
@@ -171,23 +160,16 @@ namespace Script.Enemy
 
         private void KillPlayer()
         {
-            
             PlayerStats stats = player.GetComponent<PlayerStats>();
 
             if (stats != null)
             {
-                
                 stats.TakeDamage(50f);
-
-                
-                _hasKilledPlayer = true; 
-
-                
+                _hasKilledPlayer = true;
                 Invoke("ResetAttackState", 2f);
             }
             else
             {
-                
                 _hasKilledPlayer = true;
                 Script.UI.GameController.PauseGame(youreDeadPanel);
                 if (deathText != null) deathText.text = "YOU'RE DEAD!";
@@ -195,15 +177,28 @@ namespace Script.Enemy
         }
         void ResetAttackState()
         {
-            _hasKilledPlayer = false; 
+            _hasKilledPlayer = false;
         }
 
         private void OnRestartButtonClicked()
         {
+            // Tắt UI chết chóc
             GameController.ClearAllPanels();
             if (youreDeadPanel != null) youreDeadPanel.SetActive(false);
 
+            // 1. Dịch chuyển Player và Enemy về vị trí cũ
             TeleportToCheckpoints();
+
+            // 2. --- QUAN TRỌNG: HỒI ĐẦY MÁU CHO PLAYER ---
+            if (player != null)
+            {
+                PlayerStats stats = player.GetComponent<PlayerStats>();
+                if (stats != null)
+                {
+                    stats.ResetStats(); // Gọi hàm hồi máu
+                }
+            }
+            // ---------------------------------------------
 
             if (enemyAnimator != null && _hasIsAttackParameter) enemyAnimator.SetBool(_isAttackHash, false);
 
@@ -219,13 +214,11 @@ namespace Script.Enemy
 
         public void QuitGame()
         {
-            // Nếu đang test trong Unity Editor thì dừng chơi
-            #if UNITY_EDITOR
-                        UnityEditor.EditorApplication.isPlaying = false;
-            #else
-                            // Nếu đã build ra file game thật (.exe) thì tắt ứng dụng
-                            Application.Quit();
-            #endif
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+                        Application.Quit();
+#endif
         }
 
         private void TeleportToCheckpoints()
