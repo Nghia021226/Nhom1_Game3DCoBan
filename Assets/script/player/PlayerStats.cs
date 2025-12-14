@@ -8,7 +8,7 @@ public class PlayerStats : MonoBehaviour
     [Header("UI References")]
     public Image healthFill;
     public Image staminaFill;
-    public GameObject deathPanel; // <--- THÊM BIẾN NÀY ĐỂ KÉO THẢ
+    public GameObject deathPanel;
 
     [Header("Health Settings")]
     public float maxHealth = 100f;
@@ -25,13 +25,11 @@ public class PlayerStats : MonoBehaviour
 
     void Start()
     {
-        currentHealth = maxHealth;
-        currentStamina = maxStamina;
+        // Gọi hàm reset để đảm bảo lúc mới vào game là đầy máu
+        ResetStats();
 
         _input = GetComponent<StarterAssetsInputs>();
         _controller = GetComponent<ThirdPersonController>();
-
-        UpdateUI();
     }
 
     void Update()
@@ -44,8 +42,6 @@ public class PlayerStats : MonoBehaviour
     {
         if (_input == null) return;
 
-        // Logic hồi năng lượng vẫn chạy bình thường kể cả khi đang chơi cờ
-        // (Vì nhân vật chỉ bị tàng hình chứ không bị tắt)
         if (_input.sprint && _input.move != Vector2.zero)
         {
             if (currentStamina > 0)
@@ -89,15 +85,14 @@ public class PlayerStats : MonoBehaviour
 
         if (deathPanel != null)
         {
-            // Bật UI cha (nếu có)
+            // Bật UI cha (nếu có) để đảm bảo nó hiện lên
             if (deathPanel.transform.parent != null)
                 deathPanel.transform.parent.gameObject.SetActive(true);
 
             // Gọi Pause Game
             Script.UI.GameController.PauseGame(deathPanel);
 
-            // --- FIX LỖI MẤT CHUỘT ---
-            // Ép mở khóa chuột lần nữa cho chắc chắn
+            // Mở khóa chuột
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
@@ -119,15 +114,13 @@ public class PlayerStats : MonoBehaviour
         if (currentHealth > maxHealth) currentHealth = maxHealth;
         UpdateUI();
     }
-    //public void KillPlayerImmediate()
-    //{
-    //    // Đảm bảo máu về 0
-    //    currentHealth = 0f;
 
-    //    // Gọi hàm xử lý cái chết
-    //    Die();
-
-    //    // Cập nhật UI ngay lập tức
-    //    UpdateUI();
-    //}
+    // --- HÀM MỚI: RESET MÁU VÀ THỂ LỰC ---
+    public void ResetStats()
+    {
+        currentHealth = maxHealth;
+        currentStamina = maxStamina;
+        UpdateUI();
+        Debug.Log("Đã hồi đầy máu và thể lực!");
+    }
 }
