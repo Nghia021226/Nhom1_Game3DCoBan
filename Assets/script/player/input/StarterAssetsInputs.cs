@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using System.Collections; // Cần thêm cái này để dùng Coroutine
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
-using UnityEngine.SceneManagement; // Thư viện để check tên Scene
+using UnityEngine.SceneManagement;
 
 namespace StarterAssets
 {
@@ -22,29 +23,43 @@ namespace StarterAssets
         public bool cursorLocked = true;
         public bool cursorInputForLook = true;
 
-        // --- KHAI BÁO BIẾN (Sửa lỗi "does not exist") ---
         public static bool isGameActive = true;
-        // ------------------------------------------------
 
         void Start()
         {
+            // --- FIX QUAN TRỌNG: Đợi 1 frame rồi mới check ---
+            // Để tránh việc nút bấm UI ở Menu cướp chuột
+            StartCoroutine(DelayedCursorSetup());
+        }
+
+        IEnumerator DelayedCursorSetup()
+        {
+            yield return null; // Đợi 1 khung hình
             CheckSceneState();
         }
 
         private void CheckSceneState()
         {
-            // Kiểm tra tên Scene hiện tại
             string currentScene = SceneManager.GetActiveScene().name;
 
-            // 1. NẾU LÀ MENU CHÍNH (TraiRoblox2)
-            if (currentScene == "TraiRoblox2")
+            // Kiểm tra: Nếu KHÔNG PHẢI là Menu hay Login -> Thì là Game -> Khóa chuột
+            // Bro nhớ thay tên scene Menu/Login cho đúng nếu có đổi
+            if (currentScene != "TraiRoblox2" && currentScene != "LoginScene")
             {
-                SetGameActive(false); // Tắt điều khiển, hiện chuột
+                SetGameActive(true); // Vào Game: Khóa chuột, ẩn chuột
             }
-            // 2. NẾU LÀ CÁC SCENE GAME (MainMap, v.v...)
             else
             {
-                SetGameActive(true); // Bật điều khiển để chơi ngay
+                SetGameActive(false); // Ở Menu: Hiện chuột
+            }
+        }
+
+        // --- Mẹo nhỏ: Nếu lỡ Alt-Tab ra ngoài rồi vào lại game thì khóa lại ---
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (isGameActive && hasFocus)
+            {
+                LockCursor();
             }
         }
 
@@ -76,28 +91,18 @@ namespace StarterAssets
 
         public void OnMenu(InputValue value)
         {
-            // 1. Nếu đang ở Menu chính (TraiRoblox2) -> Chặn nút ESC
-            if (SceneManager.GetActiveScene().name == "TraiRoblox2")
-            {
-                return;
-            }
+            if (SceneManager.GetActiveScene().name == "TraiRoblox2" || SceneManager.GetActiveScene().name == "LoginScene") return;
 
-            // 2. Nếu đang trong Game (MainMap) -> Cho phép Pause
             if (value.isPressed && isGameActive)
             {
-                // Tìm đối tượng quản lý Pause (GameController hoặc PauseMenuController)
-                // Dùng SendMessage để không cần quan tâm script tên là gì (tránh lỗi thiếu script)
-
                 GameObject gameController = GameObject.Find("GameController");
                 if (gameController != null)
                 {
-                    // Gọi hàm "Pause" hoặc "ShowPauseMenu" bên đó
                     gameController.SendMessage("Pause", SendMessageOptions.DontRequireReceiver);
                     gameController.SendMessage("ShowPauseMenu", SendMessageOptions.DontRequireReceiver);
                 }
                 else
                 {
-                    // Fallback: Nếu chưa có menu thì tạm thời mở chuột ra để test
                     UnlockCursor();
                 }
             }
@@ -129,21 +134,7 @@ namespace StarterAssets
             steal = newStealState;
         }
 
-        private void OnApplicationFocus(bool hasFocus)
-        {
-            if (isGameActive)
-            {
-                SetCursorState(cursorLocked);
-            }
-        }
-
-        private void SetCursorState(bool newState)
-        {
-            Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
-            Cursor.visible = !newState;
-        }
-
-        // --- CÁC HÀM QUẢN LÝ TRẠNG THÁI (Dùng chung cho cả Game) ---
+        // --- CÁC HÀM STATIC QUẢN LÝ CHUỘT ---
 
         public static void UnlockCursor()
         {
@@ -162,17 +153,10 @@ namespace StarterAssets
         public static void SetGameActive(bool active)
         {
             isGameActive = active;
-            if (active)
-            {
-                LockCursor();
-            }
-            else
-            {
-                UnlockCursor();
-            }
+            if (active) LockCursor();
+            else UnlockCursor();
         }
 
-        // Hàm này để các script khác (như Zombie) check xem game có đang chạy không
         public static bool IsGameActive()
         {
             return isGameActive;

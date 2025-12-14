@@ -2024,6 +2024,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdb2b7b7cacbfbe409de11a5e80d65f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameSceneName: MainMap
+  loginSceneName: LoginScene
   optionsPanel: {fileID: 1260009579}
   volumeText: {fileID: 1132210356}
   speakerImage: {fileID: 1516278173}
