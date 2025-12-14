@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class MainMenuController : MonoBehaviour
 {
+    [Header("Cấu hình Scene")]
+    public string gameSceneName = "MainMap";    // Scene Game chính
+    public string loginSceneName = "LoginScene"; // Scene Login (Bro nhớ tạo Scene này)
+
     [Header("UI Panels")]
     public GameObject optionsPanel;
 
@@ -18,55 +22,82 @@ public class MainMenuController : MonoBehaviour
     public Sprite soundOffIcon;
 
     private bool isMuted = false;
-    private bool isGameplayScene = false;
+
     void Start()
     {
-        if (FindObjectOfType<PauseMenuController>() != null)
+        // --- BƯỚC BẢO MẬT: CHƯA ĐĂNG NHẬP THÌ KHÔNG ĐƯỢC Ở MENU ---
+        if (!Login.IsLoggedIn())
         {
-            isGameplayScene = true;
+            Debug.LogWarning("Chưa đăng nhập! Quay về màn hình Login.");
+            SceneManager.LoadScene(loginSceneName);
+            return;
         }
+        // ---------------------------------------------------------
+
+        // Đảm bảo chuột hiện lên để bấm menu
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Time.timeScale = 1f;
+
         currentVolume = AudioListener.volume;
         UpdateVolumeUI();
     }
+
     public void PlayGame()
     {
-        SceneManager.LoadScene("MainMap");
+        // Vào game chính
+        SceneManager.LoadScene(gameSceneName);
     }
+
+    public void Logout()
+    {
+        // Xóa token và quay về login
+        Login.Logout();
+        SceneManager.LoadScene(loginSceneName);
+    }
+
     public void QuitGame()
     {
         Debug.Log("Đã thoát game!");
         Application.Quit();
     }
+
     public void OpenOptions()
     {
         if (optionsPanel != null) optionsPanel.SetActive(true);
     }
+
     public void CloseOptions()
     {
         if (optionsPanel != null) optionsPanel.SetActive(false);
     }
+
     public void IncreaseVolume()
     {
         currentVolume += 0.1f;
         if (currentVolume > 1.0f) currentVolume = 1.0f;
         ApplyVolume();
     }
+
     public void DecreaseVolume()
     {
         currentVolume -= 0.1f;
         if (currentVolume < 0.0f) currentVolume = 0.0f;
         ApplyVolume();
     }
+
     private void ApplyVolume()
     {
         AudioListener.volume = currentVolume;
         UpdateVolumeUI();
     }
+
     private void UpdateVolumeUI()
     {
         if (volumeText != null)
             volumeText.text = Mathf.RoundToInt(currentVolume * 100) + "%";
     }
+
     public void ToggleMute()
     {
         isMuted = !isMuted;
