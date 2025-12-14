@@ -44,7 +44,6 @@ public class CameraZoom : MonoBehaviour
     private Vector3 defaultDamping;
     private bool isZooming = false;
     private Cinemachine3rdPersonFollow thirdPersonComponent;
-
     void Start()
     {
         if (vCam == null) vCam = GetComponent<CinemachineVirtualCamera>();
@@ -61,12 +60,9 @@ public class CameraZoom : MonoBehaviour
         }
         UpdateCrosshairVisuals();
     }
-
     void Update()
     {
         if (vCam == null || thirdPersonComponent == null) return;
-
-        // 1. INPUT ZOOM (Phím Q)
         if (Input.GetKeyDown(KeyCode.Q))
         {
             isZooming = !isZooming;
@@ -74,17 +70,12 @@ public class CameraZoom : MonoBehaviour
             if (!isZooming) ResetInteraction();
             UpdateCrosshairVisuals();
         }
-
-        // 2. TƯƠNG TÁC KHI ZOOM
         if (isZooming)
         {
             HandleCenterInteraction();
         }
-
-        // 3. ZOOM PHYSICS
         ApplyZoomPhysics();
     }
-
     void UpdateCrosshairVisuals()
     {
         if (isZooming)
@@ -102,7 +93,6 @@ public class CameraZoom : MonoBehaviour
             if (handHover) handHover.gameObject.SetActive(false);
         }
     }
-
     void HandleCenterInteraction()
     {
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
@@ -111,11 +101,8 @@ public class CameraZoom : MonoBehaviour
         if (Physics.SphereCast(ray, interactionRadius, out hit, interactionDistance, interactableLayer))
         {
             InteractableObject obj = hit.collider.GetComponent<InteractableObject>();
-
-            // CHỈ XỬ LÝ NẾU LÀ ITEM (Bao gồm Pin, Thẻ, và BLUE KEY)
             if (obj != null && obj.type == InteractableObject.ObjectType.Item)
             {
-                // Highlight
                 if (obj != currentHighlightObj)
                 {
                     ResetHighlightEffect();
@@ -127,24 +114,18 @@ public class CameraZoom : MonoBehaviour
                         currentRenderer.material = highlightMaterial;
                     }
                 }
-
-                // UI Bàn tay
                 if (handCursor) handCursor.gameObject.SetActive(false);
                 if (handHover) handHover.gameObject.SetActive(true);
-
-                // Gợi ý
                 GameManager.instance.ShowHint(obj.GetHintText());
 
-                // Giữ E
                 if (Input.GetKey(KeyCode.E))
                 {
                     currentHoldTime += Time.deltaTime;
                     GameManager.instance.UpdateLoading(currentHoldTime, obj.holdTime);
-
                     if (currentHoldTime >= obj.holdTime)
                     {
                         obj.PerformAction();
-                        ResetInteraction(); // Reset ngay lập tức
+                        ResetInteraction();
                     }
                 }
                 else
@@ -158,26 +139,20 @@ public class CameraZoom : MonoBehaviour
                 return;
             }
         }
-
         ResetInteraction();
     }
-
     void ResetInteraction()
     {
         if (handCursor != null && isZooming) handCursor.gameObject.SetActive(true);
         if (handHover != null) handHover.gameObject.SetActive(false);
-
-        // Đảm bảo tắt Loading UI
         if (GameManager.instance != null)
         {
             GameManager.instance.HideHint();
             GameManager.instance.StopLoading();
         }
-
         currentHoldTime = 0f;
         ResetHighlightEffect();
     }
-
     void ResetHighlightEffect()
     {
         if (currentHighlightObj != null && currentRenderer != null && originalMaterial != null)
@@ -188,17 +163,14 @@ public class CameraZoom : MonoBehaviour
         currentRenderer = null;
         originalMaterial = null;
     }
-
     void ApplyZoomPhysics()
     {
         float dt = Time.deltaTime * smoothSpeed;
         float targetFOV = isZooming ? zoomFOV : defaultFOV;
         CurrentSensitivityFactor = isZooming ? mouseSensitivityMultiplier : 1f;
-
         vCam.m_Lens.FieldOfView = Mathf.Lerp(vCam.m_Lens.FieldOfView, targetFOV, dt);
         thirdPersonComponent.CameraDistance = Mathf.Lerp(thirdPersonComponent.CameraDistance, isZooming ? zoomDistance : defaultDistance, dt);
         thirdPersonComponent.ShoulderOffset = Vector3.Lerp(thirdPersonComponent.ShoulderOffset, isZooming ? zoomOffset : defaultOffset, dt);
-
         Vector3 currentDamping = thirdPersonComponent.Damping;
         thirdPersonComponent.Damping = Vector3.Lerp(currentDamping, isZooming ? zoomDamping : defaultDamping, dt);
     }

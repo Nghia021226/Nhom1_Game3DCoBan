@@ -18,68 +18,55 @@ public class MainMenuController : MonoBehaviour
     public Sprite soundOffIcon;
 
     private bool isMuted = false;
-    private bool isGameplayScene = false; // Biến kiểm tra xem có đang ở trong màn chơi không
-
+    private bool isGameplayScene = false;
     void Start()
     {
-        // Tự động kiểm tra: Nếu tìm thấy script PauseMenuController trong cảnh
-        // thì nghĩa là đang ở trong Game Play (không phải Menu chính)
         if (FindObjectOfType<PauseMenuController>() != null)
         {
             isGameplayScene = true;
         }
-
         currentVolume = AudioListener.volume;
         UpdateVolumeUI();
     }
-
     public void PlayGame()
     {
         SceneManager.LoadScene("MainMap");
     }
-
     public void QuitGame()
     {
         Debug.Log("Đã thoát game!");
         Application.Quit();
     }
-
     public void OpenOptions()
     {
         if (optionsPanel != null) optionsPanel.SetActive(true);
     }
-
     public void CloseOptions()
     {
         if (optionsPanel != null) optionsPanel.SetActive(false);
     }
-
     public void IncreaseVolume()
     {
         currentVolume += 0.1f;
         if (currentVolume > 1.0f) currentVolume = 1.0f;
         ApplyVolume();
     }
-
     public void DecreaseVolume()
     {
         currentVolume -= 0.1f;
         if (currentVolume < 0.0f) currentVolume = 0.0f;
         ApplyVolume();
     }
-
     private void ApplyVolume()
     {
         AudioListener.volume = currentVolume;
         UpdateVolumeUI();
     }
-
     private void UpdateVolumeUI()
     {
         if (volumeText != null)
             volumeText.text = Mathf.RoundToInt(currentVolume * 100) + "%";
     }
-
     public void ToggleMute()
     {
         isMuted = !isMuted;
