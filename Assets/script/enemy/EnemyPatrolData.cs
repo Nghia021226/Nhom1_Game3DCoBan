@@ -4,21 +4,21 @@ using UnityEngine;
 public class EnemyPatrolData : MonoBehaviour
 {
     [Header("Kéo thả các điểm Waypoint vào đây")]
-    [SerializeField] List<Transform> patrolPoints; // Danh sách chứa các điểm
+    [SerializeField] List<Transform> patrolPoints; 
 
     private int _lastIndex = -1; // Biến lưu lại điểm vừa đi qua
 
-    // Hàm này để AI gọi, lấy ngẫu nhiên 1 điểm
+    
     public Vector3 GetRandomWaypoint()
     {
         if (patrolPoints.Count == 0) return transform.position;
 
-        // Nếu chỉ có 1 điểm thì đành chịu, trả về điểm đó luôn
+        
         if (patrolPoints.Count == 1) return patrolPoints[0].position;
 
         int newIndex = Random.Range(0, patrolPoints.Count);
 
-        // Vòng lặp: Nếu random trúng điểm cũ thì random lại cho đến khi ra số khác
+        
         while (newIndex == _lastIndex)
         {
             newIndex = Random.Range(0, patrolPoints.Count);

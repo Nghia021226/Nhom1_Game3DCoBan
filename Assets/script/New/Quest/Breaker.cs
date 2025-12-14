@@ -1,15 +1,11 @@
 ﻿using UnityEngine;
 
-// Kế thừa từ InteractableObject để dùng chung hệ thống E, Loading Bar
 public class Breaker : InteractableObject
 {
-    // THÊM "public override" VÀO ĐÂY
+    
     public override void Start()
-    {
-        // 1. Gọi hàm Start của cha (để nó tìm và gán QuestMarker)
+    { 
         base.Start();
-
-        // 2. Sau đó mới ẩn nó đi
         ToggleMarker(false);
     }
 
@@ -22,7 +18,6 @@ public class Breaker : InteractableObject
     }
     public override string GetHintText()
     {
-        // Nếu có điện rồi thì báo khác
         if (PowerManager.instance != null && !PowerManager.instance.isPowerOff)
             return "Hệ thống điện ổn định.";
 
@@ -31,9 +26,6 @@ public class Breaker : InteractableObject
 
     public override void PerformAction()
     {
-        // 1. KHÔNG GỌI base.PerformAction() NỮA (Để tránh bị Destroy)
-
-        // 2. Tự tắt UI bằng tay (Copy từ bố sang)
         if (GameManager.instance != null)
         {
             GameManager.instance.StopLoading();

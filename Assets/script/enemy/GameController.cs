@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-// Nếu dòng dưới báo lỗi đỏ, hãy comment nó lại (thêm // vào đầu dòng)
 using StarterAssets;
 
 namespace Script.UI
 {
     public class GameController : MonoBehaviour
     {
-        // --- SINGLETON (Giúp gọi từ bất cứ đâu) ---
+        
         private static GameController _instance;
         public static GameController Instance
         {
@@ -23,11 +22,11 @@ namespace Script.UI
             }
         }
 
-        // --- VARIABLES ---
+        
         private bool _isGamePaused;
         private List<GameObject> _activePanels = new List<GameObject>();
 
-        // Các biến lưu trạng thái component để bật lại sau khi Pause
+        
         private Dictionary<Animator, bool> _animatorStates = new Dictionary<Animator, bool>();
         private Dictionary<Rigidbody, bool> _rigidbodyStates = new Dictionary<Rigidbody, bool>();
         private Dictionary<CharacterController, bool> _characterControllerStates = new Dictionary<CharacterController, bool>();
@@ -46,9 +45,9 @@ namespace Script.UI
             }
         }
 
-        // --- HÀM CHÍNH (GỌI TỪ ENEMY HOẶC UI) ---
+        
 
-        // Hàm kiểm tra Pause (Dùng cho Enemy check)
+        
         public static bool IsGamePaused()
         {
             return Instance._isGamePaused;
@@ -56,7 +55,7 @@ namespace Script.UI
 
         public static void PauseGame(GameObject panel)
         {
-            // 1. Hiện Panel UI (ví dụ bảng chết)
+            
             if (panel != null && !Instance._activePanels.Contains(panel))
             {
                 Instance._activePanels.Add(panel);
@@ -73,19 +72,18 @@ namespace Script.UI
             DisableAllAnimators();
             DisableAllRigidbodies();
             DisableAllCharacterControllers();
-            // DisableGameplayScripts(); // Tạm tắt cái này để tránh lỗi logic phức tạp
         }
 
         public static void ResumeGame(GameObject panel = null)
         {
-            // 1. Ẩn Panel
+            
             if (panel != null && Instance._activePanels.Contains(panel))
             {
                 Instance._activePanels.Remove(panel);
                 panel.SetActive(false);
             }
 
-            // 2. Nếu không còn panel nào mở thì Resume game
+            
             if (Instance._activePanels.Count == 0)
             {
                 Instance._isGamePaused = false;
@@ -102,7 +100,7 @@ namespace Script.UI
 
         public static void ClearAllPanels()
         {
-            // Dùng khi bấm Restart: Ẩn hết UI, reset trạng thái
+            
             foreach (GameObject panel in Instance._activePanels)
             {
                 if (panel != null) panel.SetActive(false);
@@ -120,7 +118,7 @@ namespace Script.UI
             EnableGameplayScripts();
         }
 
-        // --- XỬ LÝ INPUT & CURSOR (PHẦN QUAN TRỌNG) ---
+        
         private static void SetInputState(bool isGameActive)
         {
             // Xử lý chuột: Active = Khóa chuột (chơi), !Active = Hiện chuột (menu)
@@ -135,19 +133,18 @@ namespace Script.UI
                 Cursor.visible = true;
             }
 
-            // Xử lý Starter Assets (Tìm component trong scene để tránh lỗi null)
-            // Dùng FindFirstObjectByType cho Unity bản mới, hoặc FindObjectOfType cho bản cũ
+            
             var input = FindFirstObjectByType<StarterAssetsInputs>();
             if (input != null)
             {
-                // Ngắt input nhìn/di chuyển khi game pause
+                
                 input.cursorInputForLook = isGameActive;
                 input.cursorLocked = isGameActive;
-                // Nếu StarterAssets của bạn có biến 'playerInput', có thể cần disable nó ở đây
+                
             }
         }
 
-        // --- CÁC HÀM "ĐÓNG BĂNG" HỆ THỐNG (GIỮ NGUYÊN LOGIC CỦA THẦY) ---
+        
 
         private static void DisableAllAnimators()
         {

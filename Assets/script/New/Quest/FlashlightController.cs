@@ -2,8 +2,8 @@
 
 public class FlashlightController : MonoBehaviour
 {
-    [SerializeField] GameObject lightSource; // Kéo cái Spotlight trên ngực Player vào đây
-    [SerializeField] bool hasFlashlight = false; // Mới vào chưa có đèn
+    [SerializeField] GameObject lightSource; 
+    [SerializeField] bool hasFlashlight = false; 
     [SerializeField] AudioClip clickSound;
     [SerializeField] AudioSource audioSource;
 
@@ -29,10 +29,9 @@ public class FlashlightController : MonoBehaviour
         if (audioSource && clickSound) audioSource.PlayOneShot(clickSound);
     }
 
-    // Hàm gọi khi nhặt được đèn
     public void PickupFlashlight()
     {
         hasFlashlight = true;
-        if (lightSource) lightSource.SetActive(true); // Tự bật luôn cho ngầu
+        if (lightSource) lightSource.SetActive(true); 
     }
 }
