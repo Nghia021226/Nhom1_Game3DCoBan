@@ -1445,6 +1445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93252b0c8a6bcf9499f852649fc88aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isDebugMode: 1
   usernameInput: {fileID: 850967055}
   passwordInput: {fileID: 1098273764}
   loginButton: {fileID: 540268585}

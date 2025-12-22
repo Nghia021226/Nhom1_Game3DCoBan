@@ -28,6 +28,10 @@ public class LoginResponse
 
 public class Login : MonoBehaviour
 {
+    [Header("Debug Settings")]
+    public bool isDebugMode = false; // Tích chọn cái này trong Inspector để skip Login
+    public static bool SkipLogin = false; // Biến static để Menu gọi tới
+
     [Header("UI References")]
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private TMP_InputField passwordInput;
@@ -52,6 +56,12 @@ public class Login : MonoBehaviour
     private const string ROLE_KEY = "USER_ROLE";
 
     private bool isLoggingIn = false;
+
+    private void Awake()
+    {
+        // Gán giá trị từ Inspector vào biến static khi bắt đầu
+        SkipLogin = isDebugMode;
+    }
 
     void Start()
     {
@@ -206,7 +216,14 @@ public class Login : MonoBehaviour
 
     // Các hàm Static tiện ích
     public static string GetStoredToken() => PlayerPrefs.GetString(TOKEN_KEY, "");
-    public static bool IsLoggedIn() => !string.IsNullOrEmpty(GetStoredToken());
+    public static bool IsLoggedIn()
+    {
+        // Nếu đang bật chế độ Debug thì mặc định coi như đã đăng nhập
+        if (SkipLogin) return true;
+
+        // Nếu không thì mới kiểm tra Token như bình thường
+        return !string.IsNullOrEmpty(GetStoredToken());
+    }
     public static string GetUsername() => PlayerPrefs.GetString(USERNAME_KEY, "");
 
     public static void Logout()
