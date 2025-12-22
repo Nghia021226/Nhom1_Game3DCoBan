@@ -228,6 +228,9 @@ public class Login : MonoBehaviour
 
     public static void Logout()
     {
+        // Cực kỳ quan trọng: Reset lại chế độ Debug khi người dùng chủ động thoát
+        SkipLogin = false;
+
         PlayerPrefs.DeleteKey(TOKEN_KEY);
         PlayerPrefs.DeleteKey(USER_ID_KEY);
         PlayerPrefs.DeleteKey(USERNAME_KEY);
