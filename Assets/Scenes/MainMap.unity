@@ -23439,7 +23439,7 @@ PrefabInstance:
       objectReference: {fileID: 571318666}
     - target: {fileID: 8700669673776357714, guid: 7d6451059caeb7b469c69e46d9fae319, type: 3}
       propertyPath: firstTimeDuration
-      value: 10
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 8700669673776357714, guid: 7d6451059caeb7b469c69e46d9fae319, type: 3}
       propertyPath: normalCycleDuration
