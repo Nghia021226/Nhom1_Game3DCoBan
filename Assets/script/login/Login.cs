@@ -218,10 +218,24 @@ public class Login : MonoBehaviour
     public static string GetStoredToken() => PlayerPrefs.GetString(TOKEN_KEY, "");
     public static bool IsLoggedIn()
     {
-        // Nếu đang bật chế độ Debug thì mặc định coi như đã đăng nhập
+        // --- ĐOẠN CODE FIX: CHỈ CHẠY TRONG UNITY EDITOR ---
+#if UNITY_EDITOR
+        // Lấy tên Scene đang chạy hiện tại
+        string currentScene = SceneManager.GetActiveScene().name;
+
+        // Nếu Scene KHÔNG PHẢI là "LoginScene" (Login) 
+        // VÀ KHÔNG PHẢI là "TraiRoblox2" (Menu)
+        // -> Suy ra bạn đang test Map Game -> Cho qua luôn (coi như đã Login)
+        if (currentScene != "LoginScene" && currentScene != "TraiRoblox2")
+        {
+            return true;
+        }
+#endif
+        // --------------------------------------------------
+
+        // Nếu đang chạy bản Build thật hoặc đang ở scene Login/Menu thì chạy logic cũ
         if (SkipLogin) return true;
 
-        // Nếu không thì mới kiểm tra Token như bình thường
         return !string.IsNullOrEmpty(GetStoredToken());
     }
     public static string GetUsername() => PlayerPrefs.GetString(USERNAME_KEY, "");
