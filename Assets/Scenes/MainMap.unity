@@ -23439,7 +23439,7 @@ PrefabInstance:
       objectReference: {fileID: 571318666}
     - target: {fileID: 8700669673776357714, guid: 7d6451059caeb7b469c69e46d9fae319, type: 3}
       propertyPath: firstTimeDuration
-      value: 180
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8700669673776357714, guid: 7d6451059caeb7b469c69e46d9fae319, type: 3}
       propertyPath: normalCycleDuration
@@ -40125,6 +40125,10 @@ PrefabInstance:
     - target: {fileID: 5676084597614184180, guid: 50599430137dbdd478aab2760982ab3c, type: 3}
       propertyPath: m_Name
       value: HowToPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 6928385216145672549, guid: 50599430137dbdd478aab2760982ab3c, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8487566747659735433, guid: 50599430137dbdd478aab2760982ab3c, type: 3}
       propertyPath: m_text
