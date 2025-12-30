@@ -1,46 +1,54 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using StarterAssets; // Để khóa chân nhân vật
+using StarterAssets;
+using System.Collections; // Cần thêm dòng này để dùng Coroutine
 
 public class CCTVController : MonoBehaviour
 {
     [Header("Cài đặt Camera")]
-    [SerializeField] Camera securityCamera; // Kéo cái SecurityCamera vào đây
-    [SerializeField] Transform[] camPositions; // Kéo các CamPos_1, CamPos_2... vào đây
-    [SerializeField] string[] camNames; // Đặt tên cho từng cam: "Cam 1", "Hành lang"...
+    [SerializeField] Camera securityCamera;
+    [SerializeField] Transform[] camPositions;
+    [SerializeField] string[] camNames;
 
     [Header("Cài đặt UI")]
-    [SerializeField] GameObject cctvPanel; // Kéo cái CCTV_Panel vào
-    [SerializeField] TextMeshProUGUI camNameText; // Kéo cái Text hiển thị tên Cam
-    [SerializeField] GameObject noiseEffect; // (Tùy chọn) Hiệu ứng nhiễu hạt
+    [SerializeField] GameObject cctvPanel;
+    [SerializeField] TextMeshProUGUI camNameText;
+
+    // --- PHẦN MỚI: HIỆU ỨNG & ÂM THANH ---
+    [Header("Hiệu ứng CCTV")]
+    [SerializeField] Image noiseOverlay;       // Kéo ảnh Noise vào đây (nhớ chỉnh Raycast Target = false)
+    [SerializeField] AudioSource audioSource;  // Kéo AudioSource vào
+    [SerializeField] AudioClip switchSound;    // Kéo file tiếng "Xoẹt" (Static)
+    [Range(0f, 1f)][SerializeField] float normalNoiseAlpha = 0.15f; // Độ mờ nhiễu mặc định
 
     [Header("Kết nối Player")]
-    [SerializeField] GameObject player; // Kéo nhân vật vào
-    private StarterAssetsInputs _input; // Để chặn di chuyển
+    [SerializeField] GameObject player;
+    private StarterAssetsInputs _input;
 
     private bool isUsingCCTV = false;
     private int currentCamIndex = 0;
 
     void Start()
     {
-        // Ẩn hệ thống lúc đầu
         if (cctvPanel) cctvPanel.SetActive(false);
         if (securityCamera) securityCamera.gameObject.SetActive(false);
 
         if (player != null)
             _input = player.GetComponent<StarterAssetsInputs>();
+
+        // Thiết lập độ mờ nhiễu ban đầu
+        if (noiseOverlay != null)
+            noiseOverlay.color = new Color(1, 1, 1, normalNoiseAlpha);
     }
 
     void Update()
     {
-        // Bấm J để Bật/Tắt
         if (Input.GetKeyDown(KeyCode.J))
         {
             ToggleCCTV();
         }
 
-        // Nếu đang xem Cam thì bấm mũi tên để chuyển
         if (isUsingCCTV)
         {
             if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
@@ -60,37 +68,34 @@ public class CCTVController : MonoBehaviour
 
         if (isUsingCCTV)
         {
-            // --- BẬT CAMERA ---
+            // --- BẬT ---
             cctvPanel.SetActive(true);
             securityCamera.gameObject.SetActive(true);
 
-            // Khóa chân nhân vật
             if (_input != null)
             {
-                _input.cursorInputForLook = false; // Ngừng xoay chuột
-                _input.move = Vector2.zero; // Ngừng đi
+                _input.cursorInputForLook = false;
+                _input.move = Vector2.zero;
             }
 
-            // Hiện chuột (để có thể làm gì đó trên UI nếu cần) hoặc ẩn tùy bạn
-            // Ở đây mình cứ giữ nguyên trạng thái chuột của game
-
-            // Cập nhật cam đầu tiên
             UpdateCameraView();
+            PlaySwitchEffect(); // Phát tiếng khi bật lên luôn cho ngầu
 
-            // Ẩn gợi ý nếu có
             if (GameManager.instance != null) GameManager.instance.HideHint();
         }
         else
         {
-            // --- TẮT CAMERA ---
+            // --- TẮT ---
             cctvPanel.SetActive(false);
             securityCamera.gameObject.SetActive(false);
 
-            // Mở lại nhân vật
             if (_input != null)
             {
                 _input.cursorInputForLook = true;
             }
+
+            // Dừng tiếng rè nếu tắt cam
+            if (audioSource != null) audioSource.Stop();
         }
     }
 
@@ -98,29 +103,51 @@ public class CCTVController : MonoBehaviour
     {
         currentCamIndex += direction;
 
-        // Xử lý vòng lặp (Đang ở cam cuối bấm tiếp thì về cam đầu)
         if (currentCamIndex >= camPositions.Length) currentCamIndex = 0;
         if (currentCamIndex < 0) currentCamIndex = camPositions.Length - 1;
 
         UpdateCameraView();
+        PlaySwitchEffect(); // Hiệu ứng khi chuyển kênh
+    }
+
+    void PlaySwitchEffect()
+    {
+        // 1. Âm thanh
+        if (audioSource != null && switchSound != null)
+        {
+            audioSource.pitch = Random.Range(0.9f, 1.1f); // Đổi giọng tí cho đỡ nhàm
+            audioSource.PlayOneShot(switchSound);
+        }
+
+        // 2. Hình ảnh (Nháy nhiễu)
+        if (noiseOverlay != null && gameObject.activeInHierarchy)
+        {
+            StopAllCoroutines();
+            StartCoroutine(GlitchRoutine());
+        }
+    }
+
+    IEnumerator GlitchRoutine()
+    {
+        // Làm màn hình nhiễu trắng xóa trong tích tắc
+        noiseOverlay.color = new Color(1, 1, 1, 0.8f);
+        yield return new WaitForSeconds(0.1f);
+
+        // Trả về bình thường
+        noiseOverlay.color = new Color(1, 1, 1, normalNoiseAlpha);
     }
 
     void UpdateCameraView()
     {
         if (camPositions.Length == 0) return;
 
-        // 1. Dịch chuyển Camera thật tới vị trí của CamPos ảo
         Transform targetPos = camPositions[currentCamIndex];
         securityCamera.transform.position = targetPos.position;
         securityCamera.transform.rotation = targetPos.rotation;
 
-        // 2. Cập nhật tên
         if (camNameText != null && camNames.Length > currentCamIndex)
         {
             camNameText.text = camNames[currentCamIndex];
         }
-
-        // 3. (Optional) Hiệu ứng nháy nhiễu mỗi khi chuyển cam cho thật
-        // Bạn có thể thêm code play sound "bip" ở đây
     }
 }
