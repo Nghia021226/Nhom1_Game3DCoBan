@@ -33,33 +33,33 @@ public partial class CheckDetectionFOV : Action
     {
         if (Target.Value == null || IsDetected == null) return Status.Failure;
 
-        Vector3 pos = GameObject.transform.position + Vector3.up;
-        Vector3 targetPos = Target.Value.transform.position + Vector3.up;
-        float dist = Vector3.Distance(pos, targetPos);
-        Vector3 dir = (targetPos - pos).normalized;
+        Vector3 eyePosition = GameObject.transform.position + Vector3.up;
+        Vector3 playerChestPosition = Target.Value.transform.position + Vector3.up;
+        float distanceToPlayer = Vector3.Distance(eyePosition, playerChestPosition);
+        Vector3 directionToPlayer = (playerChestPosition - eyePosition).normalized;
 
         bool seen = false;
 
         // Sử dụng .Value để lấy giá trị từ BlackboardVariable
-        if (dist <= Proximity.Value)
+        if (distanceToPlayer <= Proximity.Value)
         {
             seen = true;
         }
-        else if (dist <= ViewDistance.Value)
+        else if (distanceToPlayer <= ViewDistance.Value)
         {
-            if (Vector3.Angle(GameObject.transform.forward, dir) < ViewAngle.Value * 0.5f)
+            if (Vector3.Angle(GameObject.transform.forward, directionToPlayer) < ViewAngle.Value * 0.5f)
             {
-                int mask = LayerMask.GetMask(ObstacleLayer.Value);
-                if (!Physics.Raycast(pos, dir, dist, mask))
+                int wallLayerMask = LayerMask.GetMask(ObstacleLayer.Value);
+                if (!Physics.Raycast(eyePosition, directionToPlayer, distanceToPlayer, wallLayerMask))
                 {
                     seen = true;
                     // Nếu thấy người chơi: Vẽ tia ĐỎ
-                    Debug.DrawRay(pos, dir * dist, Color.red);
+                    Debug.DrawRay(eyePosition, directionToPlayer * distanceToPlayer, Color.red);
                 }
                 else
                 {
                     // Nếu bị tường chặn hoặc ngoài tầm nhìn: Vẽ tia XANH
-                    Debug.DrawRay(pos, dir * dist, Color.green);
+                    Debug.DrawRay(eyePosition, directionToPlayer * distanceToPlayer, Color.green);
                 }
                 
             }

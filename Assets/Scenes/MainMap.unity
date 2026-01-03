@@ -30545,7 +30545,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewDistance: 10
-  viewAngle: 90
+  viewAngle: 60
   coneColor: {r: 0, g: 1, b: 0, a: 0.2}
 --- !u!1 &1578444766 stripped
 GameObject:
