@@ -40661,8 +40661,8 @@ PrefabInstance:
       value: "C\xE1ch Ch\u01A1i:\n\r\nW A S D \u2013 Di chuy\u1EC3n\r\nSpace \u2013
         Nh\u1EA3y\r\nShift \u2013 Ch\u1EA1y nhanh\r\nE ho\u1EB7c F \u2013 T\u01B0\u01A1ng
         t\xE1c\r\nL \u2013 \u0110\xE8n pin\nQ - Ph\xF3ng to\nJ - M\u1EDF/T\u1EAFt
-        camera\n\n\nNh\u1EA5n H \u0111\u1EC3 \u0111\xF3ng / m\u1EDF b\u1EA3ng h\u01B0\u1EDBng
-        d\u1EABn"
+        camera\nLCtrl - L\xE9n l\xFAt\n\n\nNh\u1EA5n H \u0111\u1EC3 \u0111\xF3ng
+        / m\u1EDF b\u1EA3ng h\u01B0\u1EDBng d\u1EABn"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
