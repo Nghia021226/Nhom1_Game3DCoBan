@@ -83,23 +83,8 @@ public class PlayerStats : MonoBehaviour
         currentHealth = 0;
         Debug.Log("Player Dead!");
 
-        if (deathPanel != null)
-        {
-            // Bật UI cha (nếu có) để đảm bảo nó hiện lên
-            if (deathPanel.transform.parent != null)
-                deathPanel.transform.parent.gameObject.SetActive(true);
-
-            // Gọi Pause Game
-            Script.UI.GameController.PauseGame(deathPanel);
-
-            // Mở khóa chuột
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
-        else
-        {
-            Debug.LogError("QUÊN KÉO CÁI DEATH PANEL VÀO SCRIPT PLAYER STATS RỒI ÔNG ƠI!");
-        }
+        // Thay vì dùng deathPanel cục bộ, gọi qua GameController trung tâm
+        Script.UI.GameController.ShowDeathScreen("You Are Death");
     }
 
     void UpdateUI()

@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using StarterAssets;
+using TMPro;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace Script.UI
 {
@@ -22,7 +25,13 @@ namespace Script.UI
             }
         }
 
-        
+        [Header("Death UI References (Cập nhật)")]
+        [SerializeField] private GameObject deathPanel;
+        [SerializeField] private TMP_Text deathText;
+        [SerializeField] private Button restartButton;
+        [SerializeField] private Button menuButton; // Thêm nút về Menu
+        [SerializeField] private Button quitButton; // Thêm nút Thoát game
+
         private bool _isGamePaused;
         private List<GameObject> _activePanels = new List<GameObject>();
 
@@ -45,9 +54,39 @@ namespace Script.UI
             }
         }
 
-        
+        void Start()
+        {
+            // Thiết lập sự kiện cho các nút
+            if (restartButton != null)
+                restartButton.onClick.AddListener(RestartGame);
 
-        
+            if (menuButton != null)
+                menuButton.onClick.AddListener(LoadMainMenu);
+
+            if (quitButton != null)
+                quitButton.onClick.AddListener(QuitGame);
+        }
+
+        public static void ShowDeathScreen(string message)
+        {
+            if (Instance.deathPanel != null)
+            {
+                if (Instance.deathText != null) Instance.deathText.text = message;
+                PauseGame(Instance.deathPanel); // Sử dụng hàm Pause có sẵn
+            }
+        }
+
+        private void RestartGame()
+        {
+            // Gọi logic hồi sinh từ GameManager (sẽ viết ở Bước 2)
+            if (GameManager.instance != null)
+            {
+                ClearAllPanels(); // Tắt bảng chết
+                GameManager.instance.RestartFromCheckpoint();
+            }
+        }
+
+
         public static bool IsGamePaused()
         {
             return Instance._isGamePaused;
@@ -118,7 +157,25 @@ namespace Script.UI
             EnableGameplayScripts();
         }
 
-        
+        public void LoadMainMenu()
+        {
+            // Quan trọng: Reset lại thời gian trước khi chuyển cảnh 
+            // để tránh lỗi đứng hình ở scene sau
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(0); // Load scene index 0 (thường là MainMenu)
+        }
+
+        public void QuitGame()
+        {
+            Debug.Log("Đã thoát game!");
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+        }
+
+
         private static void SetInputState(bool isGameActive)
         {
             // Xử lý chuột: Active = Khóa chuột (chơi), !Active = Hiện chuột (menu)

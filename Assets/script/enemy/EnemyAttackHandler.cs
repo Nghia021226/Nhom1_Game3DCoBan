@@ -11,6 +11,7 @@ namespace Script.Enemy
         [Header("Attack Settings")]
         [SerializeField] private float attackRange = 3f;
         [SerializeField] private Transform attackPoint;
+        [SerializeField] private float damageAmount = 20f;
 
         [Header("Timing Settings")]
         [Tooltip("Thời điểm bắt đầu gây sát thương (0.0 - 1.0)")]
@@ -19,18 +20,18 @@ namespace Script.Enemy
         [Tooltip("Thời điểm kết thúc gây sát thương")]
         [SerializeField] private float damageEndTime = 0.5f;
 
-        [Header("UI References")]
-        [SerializeField] private GameObject youreDeadPanel;
-        [SerializeField] private Button restartButton;
-        [SerializeField] private Button BackToMenuButton;
-        [SerializeField] private Button QuitButton;
-        [SerializeField] private TMP_Text deathText;
+        //[Header("UI References")]
+        //[SerializeField] private GameObject youreDeadPanel;
+        //[SerializeField] private Button restartButton;
+        //[SerializeField] private Button BackToMenuButton;
+        //[SerializeField] private Button QuitButton;
+        //[SerializeField] private TMP_Text deathText;
 
         [Header("References")]
-        [SerializeField] private Transform player;
-        [SerializeField] private Animator enemyAnimator;
-        [SerializeField] private Transform playerCheckpoint;
-        [SerializeField] private Transform enemyCheckpoint;
+         private Transform player;
+         private Animator enemyAnimator;
+        //[SerializeField] private Transform playerCheckpoint;
+        //[SerializeField] private Transform enemyCheckpoint;
 
         private bool _hasKilledPlayer;
         private bool _isAttacking;
@@ -44,24 +45,11 @@ namespace Script.Enemy
             _isAttacking = false;
             _hasCheckedThisAttack = false;
 
-            if (youreDeadPanel != null) youreDeadPanel.SetActive(false);
-
-            if (restartButton != null)
+            // Tự động tìm Player bằng Tag để đỡ phải kéo thả từng con quái
+            if (player == null)
             {
-                restartButton.onClick.RemoveAllListeners();
-                restartButton.onClick.AddListener(OnRestartButtonClicked);
-            }
-
-            if (BackToMenuButton != null)
-            {
-                BackToMenuButton.onClick.RemoveAllListeners();
-                BackToMenuButton.onClick.AddListener(LoadMainMenu);
-            }
-
-            if (QuitButton != null)
-            {
-                QuitButton.onClick.RemoveAllListeners();
-                QuitButton.onClick.AddListener(QuitGame);
+                GameObject p = GameObject.FindGameObjectWithTag("Player");
+                if (p != null) player = p.transform;
             }
 
             if (enemyAnimator == null) enemyAnimator = GetComponent<Animator>();
@@ -161,18 +149,9 @@ namespace Script.Enemy
         private void KillPlayer()
         {
             PlayerStats stats = player.GetComponent<PlayerStats>();
-
             if (stats != null)
             {
-                stats.TakeDamage(50f);
-                _hasKilledPlayer = true;
-                Invoke("ResetAttackState", 2f);
-            }
-            else
-            {
-                _hasKilledPlayer = true;
-                Script.UI.GameController.PauseGame(youreDeadPanel);
-                if (deathText != null) deathText.text = "YOU'RE DEAD!";
+                stats.TakeDamage(damageAmount); // Gây sát thương tối đa để chết luôn
             }
         }
         void ResetAttackState()
@@ -180,71 +159,71 @@ namespace Script.Enemy
             _hasKilledPlayer = false;
         }
 
-        private void OnRestartButtonClicked()
-        {
-            // Tắt UI chết chóc
-            GameController.ClearAllPanels();
-            if (youreDeadPanel != null) youreDeadPanel.SetActive(false);
+        //private void OnRestartButtonClicked()
+        //{
+        //    // Tắt UI chết chóc
+        //    GameController.ClearAllPanels();
+        //    if (youreDeadPanel != null) youreDeadPanel.SetActive(false);
 
-            // 1. Dịch chuyển Player và Enemy về vị trí cũ
-            TeleportToCheckpoints();
+        //    // 1. Dịch chuyển Player và Enemy về vị trí cũ
+        //    TeleportToCheckpoints();
 
-            // 2. --- QUAN TRỌNG: HỒI ĐẦY MÁU CHO PLAYER ---
-            if (player != null)
-            {
-                PlayerStats stats = player.GetComponent<PlayerStats>();
-                if (stats != null)
-                {
-                    stats.ResetStats(); // Gọi hàm hồi máu
-                }
-            }
-            // ---------------------------------------------
+        //    // 2. --- QUAN TRỌNG: HỒI ĐẦY MÁU CHO PLAYER ---
+        //    if (player != null)
+        //    {
+        //        PlayerStats stats = player.GetComponent<PlayerStats>();
+        //        if (stats != null)
+        //        {
+        //            stats.ResetStats(); // Gọi hàm hồi máu
+        //        }
+        //    }
+        //    // ---------------------------------------------
 
-            if (enemyAnimator != null && _hasIsAttackParameter) enemyAnimator.SetBool(_isAttackHash, false);
+        //    if (enemyAnimator != null && _hasIsAttackParameter) enemyAnimator.SetBool(_isAttackHash, false);
 
-            _hasKilledPlayer = false;
-            _isAttacking = false;
-            _hasCheckedThisAttack = false;
-        }
+        //    _hasKilledPlayer = false;
+        //    _isAttacking = false;
+        //    _hasCheckedThisAttack = false;
+        //}
 
-        public void LoadMainMenu()
-        {
-            SceneManager.LoadScene(0);
-        }
+//        public void LoadMainMenu()
+//        {
+//            SceneManager.LoadScene(0);
+//        }
 
-        public void QuitGame()
-        {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-                        Application.Quit();
-#endif
-        }
+//        public void QuitGame()
+//        {
+//#if UNITY_EDITOR
+//            UnityEditor.EditorApplication.isPlaying = false;
+//#else
+//                        Application.Quit();
+//#endif
+//        }
 
-        private void TeleportToCheckpoints()
-        {
-            if (player != null && playerCheckpoint != null)
-            {
-                CharacterController playerController = player.GetComponent<CharacterController>();
-                if (playerController != null)
-                {
-                    playerController.enabled = false;
-                    player.position = playerCheckpoint.position;
-                    player.rotation = playerCheckpoint.rotation;
-                    playerController.enabled = true;
-                }
-                else
-                {
-                    player.position = playerCheckpoint.position;
-                    player.rotation = playerCheckpoint.rotation;
-                }
-            }
-            if (enemyCheckpoint != null)
-            {
-                transform.position = enemyCheckpoint.position;
-                transform.rotation = enemyCheckpoint.rotation;
-            }
-        }
+        //private void TeleportToCheckpoints()
+        //{
+        //    if (player != null && playerCheckpoint != null)
+        //    {
+        //        CharacterController playerController = player.GetComponent<CharacterController>();
+        //        if (playerController != null)
+        //        {
+        //            playerController.enabled = false;
+        //            player.position = playerCheckpoint.position;
+        //            player.rotation = playerCheckpoint.rotation;
+        //            playerController.enabled = true;
+        //        }
+        //        else
+        //        {
+        //            player.position = playerCheckpoint.position;
+        //            player.rotation = playerCheckpoint.rotation;
+        //        }
+        //    }
+        //    if (enemyCheckpoint != null)
+        //    {
+        //        transform.position = enemyCheckpoint.position;
+        //        transform.rotation = enemyCheckpoint.rotation;
+        //    }
+        //}
 
         private void OnDrawGizmosSelected()
         {
