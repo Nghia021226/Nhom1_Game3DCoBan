@@ -46,6 +46,10 @@ public class GameManager : MonoBehaviour
     public bool isUsingKeypad = false;
     public GameObject playerMesh;
 
+    [Header("Checkpoint Settings (Thêm mới)")]
+    public Transform playerCheckpoint;
+    public Transform playerTransform; // Kéo Player vào đây
+
     void Awake() { if (instance == null) instance = this; else Destroy(gameObject); }
 
     void Start()
@@ -170,4 +174,23 @@ public class GameManager : MonoBehaviour
     public void StopLoading() { if (interactionPanel) { interactionPanel.SetActive(false); loadingBar.fillAmount = 0; if (hintText.text != "") hintText.gameObject.SetActive(true); } }
     public void StartEndingSequence(PlayableDirector director) { if (playerMovementScript != null) playerMovementScript.enabled = false; if (gameplayUI != null) gameplayUI.SetActive(false); if (director != null) director.Play(); }
     public void WinGame() { if (winText) winText.gameObject.SetActive(true); if (playerMovementScript != null) playerMovementScript.enabled = false; Cursor.lockState = CursorLockMode.None; Cursor.visible = true; }
+
+    public void RestartFromCheckpoint()
+    {
+        if (playerTransform != null && playerCheckpoint != null)
+        {
+            // Tạm tắt CharacterController để dịch chuyển không bị lỗi
+            var cc = playerTransform.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false;
+
+            playerTransform.position = playerCheckpoint.position;
+            playerTransform.rotation = playerCheckpoint.rotation;
+
+            if (cc != null) cc.enabled = true;
+
+            // Hồi máu cho Player
+            var stats = playerTransform.GetComponent<PlayerStats>();
+            if (stats != null) stats.ResetStats();
+        }
+    }
 }
