@@ -192,5 +192,22 @@ public class GameManager : MonoBehaviour
             var stats = playerTransform.GetComponent<PlayerStats>();
             if (stats != null) stats.ResetStats();
         }
+        // --- LOGIC MỚI: RESET TOÀN BỘ QUÁI ---
+        ResetAllEnemies();
+    }
+
+    private void ResetAllEnemies()
+    {
+        // Tìm tất cả các đối tượng có Tag là "Enemy"
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach (GameObject enemy in enemies)
+        {
+            EnemyResetHandler resetScript = enemy.GetComponent<EnemyResetHandler>();
+            if (resetScript != null)
+            {
+                resetScript.ResetEnemy();
+            }
+        }
     }
 }
