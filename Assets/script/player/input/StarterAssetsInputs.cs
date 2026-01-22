@@ -15,6 +15,7 @@ namespace StarterAssets
         public bool jump;
         public bool sprint;
         public bool steal;
+        public bool aim;
 
         [Header("Movement Settings")]
         public bool analogMovement;
@@ -84,6 +85,11 @@ namespace StarterAssets
             if (isGameActive) SprintInput(value.isPressed);
         }
 
+        public void OnAim(InputValue value)
+        {
+            if (isGameActive) AimInput(value.isPressed);
+        }
+
         public void OnSteal(InputValue value)
         {
             if (isGameActive) StealInput(value.isPressed);
@@ -127,6 +133,11 @@ namespace StarterAssets
         public void SprintInput(bool newSprintState)
         {
             sprint = newSprintState;
+        }
+
+        public void AimInput(bool newAimState)
+        {
+            aim = newAimState;
         }
 
         public void StealInput(bool newStealState)
