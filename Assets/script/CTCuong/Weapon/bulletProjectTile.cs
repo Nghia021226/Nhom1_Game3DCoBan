@@ -3,6 +3,9 @@ using UnityEngine;
 public class bulletProjectTile : MonoBehaviour
 {
    private Rigidbody bulletRigidbody;
+    [SerializeField] private Transform vfxHitGreen;
+    [SerializeField] private Transform vfxHitRed;
+    [SerializeField] private float speed;
 
     private void Awake()
     {
@@ -11,7 +14,21 @@ public class bulletProjectTile : MonoBehaviour
 
     private void Start()
     {
-        float speed = 10f;
+        //float speed = 20f;
         bulletRigidbody.linearVelocity = transform.forward * speed;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.GetComponent<bulletTarget>() != null)
+        {
+            Instantiate(vfxHitGreen,transform.position, Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(vfxHitRed, transform.position, Quaternion.identity);
+        }
+
+        Destroy(gameObject);
     }
 }
