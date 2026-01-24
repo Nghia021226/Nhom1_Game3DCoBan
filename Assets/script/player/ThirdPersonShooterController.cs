@@ -2,6 +2,8 @@
 using Cinemachine;
 using StarterAssets;
 using UnityEngine.InputSystem;
+using UnityEngine.Animations.Rigging; // Đảm bảo có thư viện này
+
 public class ThirdPersonShooterController : MonoBehaviour
 {
     [SerializeField] private CinemachineVirtualCamera aimVirtualCamera;
@@ -13,7 +15,10 @@ public class ThirdPersonShooterController : MonoBehaviour
     [SerializeField] private Transform spawnBulletPosition;
     [SerializeField] private Transform vfxHitGreen;
     [SerializeField] private Transform vfxHitRed;
-    
+
+    // KHAI BÁO 2 RIG Ở ĐÂY
+    [SerializeField] private Rig rig1; // Kéo Rig tay phải vào đây
+    [SerializeField] private Rig rig2;  // Kéo Rig tay trái vào đây
 
     private StarterAssetsInputs starterAssetsInputs;
     private ThirdPersonController thirdPersonController;
@@ -31,52 +36,49 @@ public class ThirdPersonShooterController : MonoBehaviour
         Vector3 mouseWordPosition = Vector3.zero;
         Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
         Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
-        Transform hitTransform = null;
+
         if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimCollierMask))
         {
-            // Dòng này sẽ in tên vật thể bị chạm vào Console
-            Debug.Log("Ray đang chạm trúng: " + raycastHit.collider.name);
             debugTransform.position = raycastHit.point;
             mouseWordPosition = raycastHit.point;
-            hitTransform = raycastHit.transform;
         }
+
         if (starterAssetsInputs.aim)
         {
             aimVirtualCamera.gameObject.SetActive(true);
             thirdPersonController.SetSensitivity(aimSensitivity);
             thirdPersonController.SetRotateOnMove(false);
-            //animator.SetLayerWeight(2, 1f);
+
+            // BẬT CẢ 2 RIG LÊN 1
+            float targetWeight = 1f;
+            if (rig1 != null) rig1.weight = Mathf.Lerp(rig1.weight, targetWeight, Time.deltaTime * 13f);
+            if (rig2 != null) rig2.weight = Mathf.Lerp(rig2.weight, targetWeight, Time.deltaTime * 13f);
+
+            // Bật Animator Layer (nếu có)
+            animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), targetWeight, Time.deltaTime * 13f));
 
             Vector3 wordAimTarget = mouseWordPosition;
             wordAimTarget.y = transform.position.y;
             Vector3 aimDirection = (wordAimTarget - transform.position).normalized;
-
-            transform.forward = Vector3.Lerp(transform.forward,aimDirection, Time.deltaTime * 20f);   
+            transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
         }
         else
         {
             aimVirtualCamera.gameObject.SetActive(false);
             thirdPersonController.SetSensitivity(normalSensitivity);
             thirdPersonController.SetRotateOnMove(true);
-            //animator.SetLayerWeight(2, Mathf.Lerp(animator.GetLayerWeight(1),1f,Time.deltaTime * 10f));
+
+            // TẮT CẢ 2 RIG VỀ 0
+            float targetWeight = 0f;
+            if (rig1 != null) rig1.weight = Mathf.Lerp(rig1.weight, targetWeight, Time.deltaTime * 13f);
+            if (rig2 != null) rig2.weight = Mathf.Lerp(rig2.weight, targetWeight, Time.deltaTime * 13f);
+
+            // Tắt Animator Layer
+            animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), targetWeight, Time.deltaTime * 13f));
         }
 
         if (starterAssetsInputs.shoot)
         {
-            //how raycasting works
-            //if (hitTransform != null)
-            //{
-
-            //    if (hitTransform.GetComponent<bulletTarget>() != null)
-            //    {
-            //        Instantiate(vfxHitGreen, mouseWordPosition, Quaternion.identity);
-            //    }
-            //    else
-            //    {
-            //        Instantiate(vfxHitRed, mouseWordPosition, Quaternion.identity);
-            //    }
-            //}
-            // how Instantiate works
             Vector3 aimDir = (mouseWordPosition - spawnBulletPosition.position).normalized;
             Instantiate(pfBulletProjectTile, spawnBulletPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
             starterAssetsInputs.shoot = false;
