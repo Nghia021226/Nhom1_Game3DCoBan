@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+
 public class PlayerCombatLayerController : MonoBehaviour
 {
     private Animator animator;
@@ -12,12 +13,11 @@ public class PlayerCombatLayerController : MonoBehaviour
     [Header("Cài đặt Hiển thị")]
     [SerializeField] private GameObject weaponInHand;
 
-    [Header("Sửa lỗi hướng súng")]
-    [SerializeField] private Transform chestBone; // Kéo Spine2 vào đây
-    [SerializeField] private Vector3 rotationOffset; // Chỉnh X âm để súng chúc xuống
-
     [Header("Cài đặt Animator Layer")]
-    [SerializeField] private string combatLayerName = "Combat Layer";
+    [SerializeField] private string combatLayerName = "Aim Layer";
+
+    
+   
 
     private int combatLayerIndex;
 
@@ -25,6 +25,7 @@ public class PlayerCombatLayerController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         combatLayerIndex = animator.GetLayerIndex(combatLayerName);
+        
         if (weaponInHand != null) weaponInHand.SetActive(false);
         animator.SetLayerWeight(combatLayerIndex, 0f);
     }
@@ -37,22 +38,9 @@ public class PlayerCombatLayerController : MonoBehaviour
             isArmed = !isArmed;
             UpdateVisuals();
         }
-
-        // Bắn bằng chuột trái
-        if (hasWeapon && isArmed)
-        {
-            animator.SetBool("IsShooting", Input.GetMouseButton(0));
-        }
     }
 
-    // Chạy sau Animation để ép góc xoay xương ngực thẳng lại
-    void LateUpdate()
-    {
-        if (hasWeapon && isArmed && chestBone != null)
-        {
-            chestBone.rotation *= Quaternion.Euler(rotationOffset);
-        }
-    }
+    
 
     public void UnlockWeapon()
     {
