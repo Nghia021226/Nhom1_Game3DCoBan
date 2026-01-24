@@ -9181,6 +9181,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8731801600933439272, guid: ce735fb5880b7b64287dbdd672ab31d5, type: 3}
   m_PrefabInstance: {fileID: 829278287631194087}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &395802467 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7935420346500170334, guid: 2dfbf87180a4ff346baea744fab177a7, type: 3}
+  m_PrefabInstance: {fileID: 182929871}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &400855626
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38048,6 +38053,7 @@ MonoBehaviour:
   vfxHitRed: {fileID: 405389230732083210, guid: 7e6d58b6fdc4cdb468e6a27375085e4c, type: 3}
   rig1: {fileID: 923616377}
   rig2: {fileID: 613732285}
+  crosshairUI: {fileID: 395802467}
 --- !u!114 &1968945593
 MonoBehaviour:
   m_ObjectHideFlags: 0

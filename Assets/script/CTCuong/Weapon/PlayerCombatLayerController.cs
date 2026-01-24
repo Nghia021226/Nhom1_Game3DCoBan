@@ -40,7 +40,11 @@ public class PlayerCombatLayerController : MonoBehaviour
         }
     }
 
-    
+    // Trong file PlayerCombatLayerController.cs
+    public bool GetIsArmed()
+    {
+        return isArmed;
+    }
 
     public void UnlockWeapon()
     {
