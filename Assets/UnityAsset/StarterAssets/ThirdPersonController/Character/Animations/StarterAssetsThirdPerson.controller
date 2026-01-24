@@ -587,7 +587,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Aim Layer
     m_StateMachine: {fileID: -4433515284057992305}
-    m_Mask: {fileID: 0}
+    m_Mask: {fileID: 31900000, guid: ec7b166102dbfaa48bc8cc22577c9442, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
