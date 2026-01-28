@@ -30621,13 +30621,13 @@ MonoBehaviour:
   player: {fileID: 0}
   followOffset: {x: 0.8, y: 1.5, z: -1}
   smoothSpeed: 3
-  detectRange: 7.31
+  detectRange: 0
   fireCooldown: 10
   firePoint: {fileID: 1300859165}
   bulletPrefab: {fileID: 6946727762837041385, guid: e30b502745ac3d742bbc02f4096f8417, type: 3}
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
   audioSource: {fileID: 0}
   shootSound: {fileID: 8300000, guid: d8d59e21d812fa140b1753939e91b032, type: 3}
 --- !u!82 &1213421688
