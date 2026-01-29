@@ -69,20 +69,18 @@ public partial class CheckDetectionFOV : Action
         {
             if (seen)
             {
-                // Khi thấy người: Chuyển hẳn sang ĐỎ rực
-                _eyeLight.color = Color.red;
-                _eyeLight.intensity = 15f; // Tăng sáng mạnh để báo động
+                IsDetected.Value = true;
             }
-            else
+
+            // Cập nhật đèn cảnh báo dựa trên trạng thái IsDetected tổng thể
+            if (_eyeLight != null)
             {
-                // Khi không thấy: Chuyển hẳn sang XANH LÁ (Green)
-                // Không để màu đỏ cũ dính vào
-                _eyeLight.color = Color.green;
-                _eyeLight.intensity = 3f;  // Sáng nhẹ nhàng khi đi tuần
+                _eyeLight.color = IsDetected.Value ? Color.red : Color.green;
+                _eyeLight.intensity = IsDetected.Value ? 15f : 3f;
             }
         }
 
-            IsDetected.Value = seen;
-        return Status.Success;
+            
+        return Status.Running;
     }
 }
