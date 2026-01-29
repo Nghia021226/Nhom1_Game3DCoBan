@@ -16299,31 +16299,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 53.60749
+      value: 56.81449
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.761304
+      value: 1.5503038
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 448.78586
+      value: 462.59485
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.029562134
+      value: 0.059950434
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.04073793
+      value: -0.058220692
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.67260945
+      value: -0.99629843
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.7382839
+      value: 0.02014252
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -50263,6 +50263,9 @@ MonoBehaviour:
   spawnBulletPosition: {fileID: 829278287631194088}
   vfxHitGreen: {fileID: 2203998868706470901, guid: 2cecd1550a2fbba47b71302266bb4ea1, type: 3}
   vfxHitRed: {fileID: 405389230732083210, guid: 7e6d58b6fdc4cdb468e6a27375085e4c, type: 3}
+  audioSource: {fileID: 1968945599}
+  laserShootSound: {fileID: 8300000, guid: e7baaa90195682e4e91468ee60c3eb5d, type: 3}
+  volume: 1
   rig1: {fileID: 923616377}
   rig2: {fileID: 613732285}
   crosshairUI: {fileID: 395802467}
