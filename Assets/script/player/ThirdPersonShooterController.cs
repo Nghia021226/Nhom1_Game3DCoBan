@@ -19,6 +19,12 @@ public class ThirdPersonShooterController : MonoBehaviour
     [SerializeField] private Transform vfxHitGreen;
     [SerializeField] private Transform vfxHitRed;
 
+    // Thêm vào vùng Header Shooting & VFX trong file ThirdPersonShooterController.cs
+    [Header("Audio Settings")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip laserShootSound;
+    [Range(0f, 2f)][SerializeField] private float volume = 1f;
+
     [Header("Animation Rigging")]
     [SerializeField] private Rig rig1; // Tay phải
     [SerializeField] private Rig rig2; // Tay trái
@@ -98,6 +104,14 @@ public class ThirdPersonShooterController : MonoBehaviour
         {
             if (isCurrentlyAiming)
             {
+                // --- PHẦN THÊM MỚI: PHÁT ÂM THANH ---
+                if (audioSource != null && laserShootSound != null)
+                {
+                    // Mẹo nhỏ: Đổi pitch ngẫu nhiên một chút để tiếng súng nghe không bị chán
+                    audioSource.pitch = Random.Range(0.9f, 1.1f);
+                    audioSource.PlayOneShot(laserShootSound, volume);
+                }
+
                 Vector3 aimDir = (mouseWorldPosition - spawnBulletPosition.position).normalized;
                 Instantiate(pfBulletProjectTile, spawnBulletPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
             }
