@@ -20,6 +20,11 @@ public class OpeningCutscene : MonoBehaviour
     private Vector3 startPos;
     private Quaternion startRot;
 
+    // --- PHẦN THÊM MỚI ---
+    [Header("Âm Thanh Nhân Vật")]
+    public AudioSource johnVoiceSource;
+    public float delayToPlayVoice = 9f; 
+
     // Biến lưu trữ cài đặt Camera cũ để khôi phục sau khi Cut
     private CinemachineBlendDefinition originalBlend;
     private CinemachineBrain mainCameraBrain;
@@ -59,6 +64,19 @@ public class OpeningCutscene : MonoBehaviour
             timelineDirector.Play();
             timelineDirector.stopped += OnCutsceneFinish;
             StartCoroutine(ShowSkipHint());
+
+            // PHẦN THÊM MỚI: Bắt đầu đếm ngược để phát tiếng John
+            StartCoroutine(PlayJohnVoiceAfterDelay());
+        }
+    }
+
+    // Coroutine để chờ đúng 9 giây rồi phát tiếng
+    IEnumerator PlayJohnVoiceAfterDelay()
+    {
+        yield return new WaitForSeconds(delayToPlayVoice);
+        if (!hasSkipped && johnVoiceSource != null)
+        {
+            johnVoiceSource.Play();
         }
     }
 
@@ -82,6 +100,9 @@ public class OpeningCutscene : MonoBehaviour
     void SkipCutscene()
     {
         hasSkipped = true;
+
+        // PHẦN THÊM MỚI: Tắt tiếng ngay lập tức nếu người chơi Skip phim
+        if (johnVoiceSource != null) johnVoiceSource.Stop();
 
         // --- XỬ LÝ INSTANT CUT (CẮT NGAY LẬP TỨC) ---
         if (mainCameraBrain != null)
@@ -119,6 +140,9 @@ public class OpeningCutscene : MonoBehaviour
 
             if (cc != null) cc.enabled = true;
         }
+
+        // Đảm bảo tắt tiếng khi kết thúc phim
+        if (johnVoiceSource != null) johnVoiceSource.Stop();
 
         // Tắt Camera Cutscene -> Vì Blend đang là 0 nên nó sẽ nhảy bụp về Camera Player
         if (cutsceneCamHolder != null) cutsceneCamHolder.SetActive(false);
