@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class bulletProjectTile : MonoBehaviour
 {
@@ -20,15 +20,18 @@ public class bulletProjectTile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.GetComponent<bulletTarget>() != null)
+        // Kiểm tra xem thứ vừa chạm có nhận dame được không
+        IDamageable victim = other.GetComponent<IDamageable>();
+
+        if (victim != null)
         {
-            Instantiate(vfxHitGreen,transform.position, Quaternion.identity);
+            victim.TakeDamage(25f); // Gây 25 sát thương
+            if (vfxHitGreen != null) Instantiate(vfxHitGreen, transform.position, Quaternion.identity);
         }
         else
         {
-            Instantiate(vfxHitRed, transform.position, Quaternion.identity);
+            if (vfxHitRed != null) Instantiate(vfxHitRed, transform.position, Quaternion.identity);
         }
-
         Destroy(gameObject);
     }
 }
