@@ -37,7 +37,12 @@ public class BossLaserSkill : MonoBehaviour
             initialWarningScale = warningZonePrefab.transform.localScale;
         }
 
-        Debug.Log("[BossSkill] Start: Hệ thống Boss đa điểm sẵn sàng.");
+        Debug.Log("[BossSkill] Boss đang ngủ, chờ Player gọi...");
+        //StartCoroutine(AutoSkillLoop());
+    }
+    public void StartFighting()
+    {
+        Debug.Log("[BossSkill] Đã nhận lệnh chiến đấu!");
         StartCoroutine(AutoSkillLoop());
     }
 
@@ -46,6 +51,10 @@ public class BossLaserSkill : MonoBehaviour
     {
         while (true)
         {
+            // ✅ THÊM DÒNG NÀY: Chờ 25 giây khởi động trước khi bắn đợt đầu
+            Debug.Log("[BossSkill] Đang chờ cooldown 25s sau hội thoại...");
+            yield return new WaitForSeconds(25.0f);
+
             Debug.Log("[BossSkill] --- BẮT ĐẦU TRẠNG THÁI CUỒNG NỘ (10s) ---");
 
             float activeTimer = 0f;
