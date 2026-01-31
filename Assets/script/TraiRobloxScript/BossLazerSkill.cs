@@ -7,19 +7,25 @@ public class BossLaserSkill : MonoBehaviour
     public GameObject warningZonePrefab;
     public GameObject laserPrefab;
 
+    [Header("--- Cài đặt Âm Thanh [MỚI] ---")]
+    public AudioSource audioSource;       // Kéo cái Loa vào đây
+    public AudioClip warningSound;        // Tiếng "ting" cảnh báo
+    public AudioClip laserSound;          // Tiếng "bùm" khi bắn
+    [Range(0f, 1f)] public float soundVolume = 0.3f; // Chỉnh nhỏ thôi vì 10 tia kêu cùng lúc sẽ rất to
+
     [Header("--- Cài đặt Thời Gian ---")]
-    public float skillActiveDuration = 10.0f; // Tổng thời gian skill hoạt động (Boss gồng trong 10s)
+    public float skillActiveDuration = 10.0f; // Tổng thời gian skill hoạt động
     public float waveInterval = 2.0f;         // Cứ 2s bắn 1 đợt
     public float skillCooldown = 20.0f;       // Hồi chiêu sau khi xong hết
 
     [Header("--- Cài đặt Chi tiết đợt bắn ---")]
-    public int lasersPerWave = 10;            // Số lượng tia (và số vùng cảnh báo) mỗi đợt
-    public float warningDuration = 1.5f;      // Thời gian vòng đỏ cảnh báo to dần trước khi bắn
-    public float laserLifeTime = 1.0f;        // Laze tồn tại bao lâu rồi tắt
+    public int lasersPerWave = 10;            // Số lượng tia mỗi đợt
+    public float warningDuration = 1.5f;      // Thời gian cảnh báo
+    public float laserLifeTime = 1.0f;        // Laze tồn tại bao lâu
 
     [Header("--- Cài đặt Khu Vực ---")]
-    public float warningSize = 1.5f;          // Kích thước của MỖI vòng cảnh báo nhỏ
-    public float laserSpawnHeight = 10.0f;    // Độ cao laze
+    public float warningSize = 1.5f;
+    public float laserSpawnHeight = 10.0f;
     public float warningHeight = 0.5f;
 
     [Header("--- Phạm Vi Ngẫu Nhiên (Map) ---")]
@@ -32,26 +38,28 @@ public class BossLaserSkill : MonoBehaviour
 
     void Start()
     {
+        // Tự động lấy AudioSource nếu quên kéo, nhưng tốt nhất bạn nên kéo tay
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+
         if (warningZonePrefab != null)
         {
             initialWarningScale = warningZonePrefab.transform.localScale;
         }
 
         Debug.Log("[BossSkill] Boss đang ngủ, chờ Player gọi...");
-        //StartCoroutine(AutoSkillLoop());
     }
+
     public void StartFighting()
     {
         Debug.Log("[BossSkill] Đã nhận lệnh chiến đấu!");
         StartCoroutine(AutoSkillLoop());
     }
 
-    // Vòng lặp chính quản lý trạng thái Boss (Bắn -> Nghỉ -> Bắn)
+    // Vòng lặp chính quản lý trạng thái Boss
     IEnumerator AutoSkillLoop()
     {
         while (true)
         {
-            // ✅ THÊM DÒNG NÀY: Chờ 25 giây khởi động trước khi bắn đợt đầu
             Debug.Log("[BossSkill] Đang chờ cooldown 25s sau hội thoại...");
             yield return new WaitForSeconds(25.0f);
 
@@ -59,15 +67,9 @@ public class BossLaserSkill : MonoBehaviour
 
             float activeTimer = 0f;
 
-            // Trong 10 giây này, cứ mỗi waveInterval (2s) sẽ gọi lệnh bắn 1 lần
             while (activeTimer < skillActiveDuration)
             {
-                Debug.Log($"[BossSkill] >>> Kích hoạt đợt tấn công tại giây thứ {activeTimer}: Rải {lasersPerWave} điểm nổ.");
-
-                // Gọi hàm bắn 1 đợt (Hàm này sẽ tự xử lý việc sinh ra 10 điểm riêng biệt)
                 SpawnMultiShotWave();
-
-                // Chờ đến đợt tiếp theo
                 yield return new WaitForSeconds(waveInterval);
                 activeTimer += waveInterval;
             }
@@ -77,29 +79,32 @@ public class BossLaserSkill : MonoBehaviour
         }
     }
 
-    // Hàm sinh ra 1 đợt gồm nhiều tia riêng biệt
+    // Hàm sinh ra 1 đợt gồm nhiều tia
     void SpawnMultiShotWave()
     {
         for (int i = 0; i < lasersPerWave; i++)
         {
-            // 1. Chọn vị trí ngẫu nhiên cho tia này
             float rX = Random.Range(minX, maxX);
             float rZ = Random.Range(minZ, maxZ);
             Vector3 targetPos = new Vector3(rX, warningHeight, rZ);
 
-            // 2. Chạy quy trình (Cảnh báo -> Bắn) cho riêng vị trí này
-            // Dùng StartCoroutine ở đây để 10 tia chạy song song nhau cùng lúc
             StartCoroutine(ProcessSingleStrike(targetPos));
         }
     }
 
-    // Quy trình xử lý cho MỘT tia laze duy nhất (Warning -> Laser)
+    // Quy trình xử lý cho MỘT tia laze (CÓ THÊM ÂM THANH)
     IEnumerator ProcessSingleStrike(Vector3 position)
     {
-        // --- GIAI ĐOẠN 1: CẢNH BÁO TẠI ĐIỂM NÀY ---
-        GameObject warnObj = Instantiate(warningZonePrefab, position, Quaternion.identity);
+        // --- GIAI ĐOẠN 1: CẢNH BÁO ---
 
-        // Reset scale về 0 để hiệu ứng phình to
+        // [MỚI] Phát tiếng cảnh báo ngay khi vòng đỏ xuất hiện
+        if (audioSource != null && warningSound != null)
+        {
+            // Dùng PlayOneShot để các âm thanh đè lên nhau được (không bị ngắt quãng)
+            audioSource.PlayOneShot(warningSound, soundVolume);
+        }
+
+        GameObject warnObj = Instantiate(warningZonePrefab, position, Quaternion.identity);
         warnObj.transform.localScale = new Vector3(0, initialWarningScale.y, 0);
 
         float timer = 0f;
@@ -107,28 +112,27 @@ public class BossLaserSkill : MonoBehaviour
         {
             timer += Time.deltaTime;
             float progress = timer / warningDuration;
-            // Lerp từ 0 lên kích thước warningSize (nhỏ)
             float currentSize = Mathf.Lerp(0, warningSize, progress);
             warnObj.transform.localScale = new Vector3(currentSize, initialWarningScale.y, currentSize);
             yield return null;
         }
 
-        // Đảm bảo kích thước cuối cùng chuẩn xác
         warnObj.transform.localScale = new Vector3(warningSize, initialWarningScale.y, warningSize);
-
-        // Chờ xíu xiu sau khi vòng đỏ đầy rồi mới bắn (tùy chọn, để 0 cũng được)
         yield return new WaitForSeconds(0.1f);
-
-        // Xóa cảnh báo
         Destroy(warnObj);
 
-        // --- GIAI ĐOẠN 2: BẮN LAZE TẠI ĐIỂM NÀY ---
+        // --- GIAI ĐOẠN 2: BẮN LAZE ---
+
+        // [MỚI] Phát tiếng laze nổ ngay khi tia laze xuất hiện
+        if (audioSource != null && laserSound != null)
+        {
+            audioSource.PlayOneShot(laserSound, soundVolume);
+        }
+
         Vector3 spawnPos = position + Vector3.up * laserSpawnHeight;
         GameObject laserObj = Instantiate(laserPrefab, spawnPos, Quaternion.identity);
 
-        // Laze tồn tại một chút rồi mất
         yield return new WaitForSeconds(laserLifeTime);
-
         Destroy(laserObj);
     }
 }
