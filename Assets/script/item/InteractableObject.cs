@@ -6,7 +6,7 @@ public class InteractableObject : MonoBehaviour
 {
     public enum ObjectType { Item, Door, Computer, Keypad, Locker, Pet, None }
     public ObjectType type;
-    public enum ItemType { None, Battery, HealthPotion, KeyCard, Chip, BlueKey, GateCard }
+    public enum ItemType { None, Battery, HealthPotion, KeyCard, Chip, BlueKey, GateCard, Meat }
 
     [Header("--- SOUND EFFECTS (Mới) ---")]
     public AudioClip interactSound; // Kéo âm thanh nhặt/tương tác vào đây
