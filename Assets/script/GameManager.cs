@@ -40,6 +40,10 @@ public class GameManager : MonoBehaviour
     public Image loadingBar;
     public TextMeshProUGUI timerText;
 
+    [Header("Inventory")]
+    public bool hasMeat = false; // Đang cầm thịt hay không?
+    public GameObject meatPrefab;
+
     // References
     public MonoBehaviour playerMovementScript;
     public bool isAiming = false;
