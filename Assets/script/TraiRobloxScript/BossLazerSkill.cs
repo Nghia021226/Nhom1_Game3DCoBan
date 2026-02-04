@@ -1,97 +1,85 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-// Đổi tên class nếu muốn, không thì giữ nguyên cũng được nhưng logic đã thay đổi
 public class BossLaserSkill : MonoBehaviour
 {
-    [Header("--- KẾT NỐI CÁC SKILL ---")]
-    public BossShieldSkill shieldSkillScript; // Kéo Script BossShieldSkill vào đây
-
-    [Header("--- Cài đặt Laze Cũ ---")]
+    [Header("--- Cài đặt Prefab ---")]
     public GameObject warningZonePrefab;
     public GameObject laserPrefab;
-    public AudioSource audioSource;
-    public AudioClip warningSound;
-    public AudioClip laserSound;
-    [Range(0f, 1f)] public float soundVolume = 0.3f;
 
-    [Header("--- Cài đặt Chung ---")]
-    public float timeBetweenSkills = 5.0f; // Thời gian nghỉ giữa các skill
+    [Header("--- Cài đặt Âm Thanh [MỚI] ---")]
+    public AudioSource audioSource;       // Kéo cái Loa vào đây
+    public AudioClip warningSound;        // Tiếng "ting" cảnh báo
+    public AudioClip laserSound;          // Tiếng "bùm" khi bắn
+    [Range(0f, 1f)] public float soundVolume = 0.3f; // Chỉnh nhỏ thôi vì 10 tia kêu cùng lúc sẽ rất to
 
-    // Các biến Laze cũ giữ nguyên...
-    public float waveInterval = 2.0f;
-    public int lasersPerWave = 10;
-    public float warningDuration = 1.5f;
-    public float laserLifeTime = 1.0f;
+    [Header("--- Cài đặt Thời Gian ---")]
+    public float skillActiveDuration = 10.0f; // Tổng thời gian skill hoạt động
+    public float waveInterval = 2.0f;         // Cứ 2s bắn 1 đợt
+    public float skillCooldown = 20.0f;       // Hồi chiêu sau khi xong hết
+
+    [Header("--- Cài đặt Chi tiết đợt bắn ---")]
+    public int lasersPerWave = 10;            // Số lượng tia mỗi đợt
+    public float warningDuration = 1.5f;      // Thời gian cảnh báo
+    public float laserLifeTime = 1.0f;        // Laze tồn tại bao lâu
+
+    [Header("--- Cài đặt Khu Vực ---")]
     public float warningSize = 1.5f;
     public float laserSpawnHeight = 10.0f;
     public float warningHeight = 0.5f;
-    public float minX = -10f; public float maxX = 10f;
-    public float minZ = -10f; public float maxZ = 10f;
+
+    [Header("--- Phạm Vi Ngẫu Nhiên (Map) ---")]
+    public float minX = -10f;
+    public float maxX = 10f;
+    public float minZ = -10f;
+    public float maxZ = 10f;
+
     private Vector3 initialWarningScale;
 
     void Start()
     {
+        // Tự động lấy AudioSource nếu quên kéo, nhưng tốt nhất bạn nên kéo tay
         if (audioSource == null) audioSource = GetComponent<AudioSource>();
-        if (warningZonePrefab != null) initialWarningScale = warningZonePrefab.transform.localScale;
+
+        if (warningZonePrefab != null)
+        {
+            initialWarningScale = warningZonePrefab.transform.localScale;
+        }
+
+        Debug.Log("[BossSkill] Boss đang ngủ, chờ Player gọi...");
     }
 
     public void StartFighting()
     {
-        Debug.Log("[Boss] Đã nhận lệnh chiến đấu!");
-        StartCoroutine(BossBattleLoop());
+        Debug.Log("[BossSkill] Đã nhận lệnh chiến đấu!");
+        StartCoroutine(AutoSkillLoop());
     }
 
-    IEnumerator BossBattleLoop()
+    // Vòng lặp chính quản lý trạng thái Boss
+    IEnumerator AutoSkillLoop()
     {
-        // Chờ một chút trước khi bắt đầu
-        yield return new WaitForSeconds(3.0f);
-
         while (true)
         {
-            // --- RANDOM SKILL ---
-            // 0: Laze, 1: Tạo Giáp
-            int randomSkill = Random.Range(0, 2);
+            Debug.Log("[BossSkill] Đang chờ cooldown 25s sau hội thoại...");
+            yield return new WaitForSeconds(25.0f);
 
-            if (randomSkill == 0)
-            {
-                Debug.Log("[Boss] Skill: MƯA LAZE!");
-                yield return StartCoroutine(DoLaserSkill());
-            }
-            else
-            {
-                Debug.Log("[Boss] Skill: TẠO GIÁP!");
-                if (shieldSkillScript != null)
-                {
-                    // Gọi skill giáp
-                    shieldSkillScript.ActivateShieldSkill();
+            Debug.Log("[BossSkill] --- BẮT ĐẦU TRẠNG THÁI CUỒNG NỘ (10s) ---");
 
-                    // Chờ cho đến khi skill giáp xong (người chơi phá hết neo)
-                    yield return new WaitUntil(() => shieldSkillScript.IsSkillFinished());
-                }
-                else
-                {
-                    Debug.LogWarning("Chưa gắn Script BossShieldSkill!");
-                }
+            float activeTimer = 0f;
+
+            while (activeTimer < skillActiveDuration)
+            {
+                SpawnMultiShotWave();
+                yield return new WaitForSeconds(waveInterval);
+                activeTimer += waveInterval;
             }
 
-            Debug.Log($"[Boss] Nghỉ mệt {timeBetweenSkills}s...");
-            yield return new WaitForSeconds(timeBetweenSkills);
+            Debug.Log($"[BossSkill] Hết thời gian cuồng nộ. Đang hồi chiêu... ({skillCooldown}s)");
+            yield return new WaitForSeconds(skillCooldown);
         }
     }
 
-    // Tách logic Laze cũ ra thành hàm riêng để gọn
-    IEnumerator DoLaserSkill()
-    {
-        // Bắn 3 đợt laze liên tục (hoặc tùy bạn chỉnh)
-        for (int i = 0; i < 3; i++)
-        {
-            SpawnMultiShotWave();
-            yield return new WaitForSeconds(waveInterval);
-        }
-    }
-
-    // Giữ nguyên các hàm SpawnMultiShotWave và ProcessSingleStrike cũ ở dưới...
+    // Hàm sinh ra 1 đợt gồm nhiều tia
     void SpawnMultiShotWave()
     {
         for (int i = 0; i < lasersPerWave; i++)
@@ -99,18 +87,23 @@ public class BossLaserSkill : MonoBehaviour
             float rX = Random.Range(minX, maxX);
             float rZ = Random.Range(minZ, maxZ);
             Vector3 targetPos = new Vector3(rX, warningHeight, rZ);
+
             StartCoroutine(ProcessSingleStrike(targetPos));
         }
     }
 
+    // Quy trình xử lý cho MỘT tia laze (CÓ THÊM ÂM THANH)
     IEnumerator ProcessSingleStrike(Vector3 position)
     {
-        // ... (Code cũ của bạn giữ nguyên phần này)
-        // COPY LẠI PHẦN LOGIC CẢNH BÁO VÀ BẮN LAZE TỪ FILE CŨ VÀO ĐÂY
-        // ...
+        // --- GIAI ĐOẠN 1: CẢNH BÁO ---
 
-        // Đoạn này để code chạy được mình viết tắt, bạn copy paste ruột hàm ProcessSingleStrike cũ vào nhé
-        if (audioSource != null && warningSound != null) audioSource.PlayOneShot(warningSound, soundVolume);
+        // [MỚI] Phát tiếng cảnh báo ngay khi vòng đỏ xuất hiện
+        if (audioSource != null && warningSound != null)
+        {
+            // Dùng PlayOneShot để các âm thanh đè lên nhau được (không bị ngắt quãng)
+            audioSource.PlayOneShot(warningSound, soundVolume);
+        }
+
         GameObject warnObj = Instantiate(warningZonePrefab, position, Quaternion.identity);
         warnObj.transform.localScale = new Vector3(0, initialWarningScale.y, 0);
 
@@ -123,11 +116,22 @@ public class BossLaserSkill : MonoBehaviour
             warnObj.transform.localScale = new Vector3(currentSize, initialWarningScale.y, currentSize);
             yield return null;
         }
+
+        warnObj.transform.localScale = new Vector3(warningSize, initialWarningScale.y, warningSize);
+        yield return new WaitForSeconds(0.1f);
         Destroy(warnObj);
 
-        if (audioSource != null && laserSound != null) audioSource.PlayOneShot(laserSound, soundVolume);
+        // --- GIAI ĐOẠN 2: BẮN LAZE ---
+
+        // [MỚI] Phát tiếng laze nổ ngay khi tia laze xuất hiện
+        if (audioSource != null && laserSound != null)
+        {
+            audioSource.PlayOneShot(laserSound, soundVolume);
+        }
+
         Vector3 spawnPos = position + Vector3.up * laserSpawnHeight;
         GameObject laserObj = Instantiate(laserPrefab, spawnPos, Quaternion.identity);
+
         yield return new WaitForSeconds(laserLifeTime);
         Destroy(laserObj);
     }
