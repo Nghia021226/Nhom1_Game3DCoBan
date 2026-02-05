@@ -1,24 +1,48 @@
-using UnityEngine;
+﻿using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class EnemySoundController : MonoBehaviour
 {
-    public AudioSource audioSource;
-    public AudioClip shootSound;
+    [Header("Audio Clips")]
     public AudioClip hitSound;
     public AudioClip dieSound;
 
-    public void PlayShoot()
+    [Header("Audio Settings")]
+    [Range(0f, 1f)]
+    public float hitVolume = 1f;
+
+    [Range(0f, 1f)]
+    public float dieVolume = 1f;
+
+    private AudioSource audioSource;
+    private bool isDead;
+
+    void Awake()
     {
-        audioSource.PlayOneShot(shootSound);
+        audioSource = GetComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 1f; // 3D sound
     }
 
-    public void PlayHit()
+    // ===== ANIMATION EVENT =====
+    // Gọi ở animation Hit
+    public void PlayHitSound()
     {
-        audioSource.PlayOneShot(hitSound);
+        if (isDead) return;
+        if (hitSound == null) return;
+
+        audioSource.PlayOneShot(hitSound, hitVolume);
     }
 
-    public void PlayDie()
+    // ===== ANIMATION EVENT =====
+    // Gọi ở animation Die
+    public void PlayDieSound()
     {
-        audioSource.PlayOneShot(dieSound);
+        if (isDead) return;
+        isDead = true;
+
+        if (dieSound == null) return;
+
+        audioSource.PlayOneShot(dieSound, dieVolume);
     }
 }
