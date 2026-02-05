@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 using Unity.Behavior;
+using System.Collections;
 
 public class EnemyStats : MonoBehaviour, IDamageable
 {
@@ -9,6 +10,11 @@ public class EnemyStats : MonoBehaviour, IDamageable
     private bool isDead = false;
     private Animator anim;
     private BehaviorGraphAgent behaviorAgent;
+
+    [Header("Loot Settings")]
+    [SerializeField] private GameObject ammoLootPrefab; // Kéo Prefab hòm đạn vào đây
+    [SerializeField] private float lootHeightOffset = 0.5f;
+    [SerializeField] private float lootSpawnDelay = 1.5f;
 
     void Start()
     {
@@ -31,7 +37,7 @@ public class EnemyStats : MonoBehaviour, IDamageable
         if (currentHealth <= 0) Die();
     }
 
-    private System.Collections.IEnumerator HitStunRoutine()
+    private IEnumerator HitStunRoutine()
     {
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
 
@@ -58,6 +64,26 @@ public class EnemyStats : MonoBehaviour, IDamageable
         if (behaviorAgent != null) behaviorAgent.SetVariableValue("IsDead", true);
         GetComponent<Collider>().enabled = false;
         GetComponent<NavMeshAgent>().isStopped = true;
+        
+        StartCoroutine(SpawnLootRoutine());
+
         Destroy(gameObject, 5f);
+    }
+
+    private IEnumerator SpawnLootRoutine()
+    {
+        // Chờ một khoảng thời gian bằng với thời gian animation chết
+        yield return new WaitForSeconds(lootSpawnDelay);
+
+        if (ammoLootPrefab != null)
+        {
+            Vector3 spawnPosition = transform.position + Vector3.up * lootHeightOffset;
+            Instantiate(ammoLootPrefab, spawnPosition, Quaternion.identity);
+            Debug.Log("<color=green>Loot spawned after delay!</color>");
+        }
+        else
+        {
+            Debug.LogError("Thiếu prefab hòm đạn trong Inspector!");
+        }
     }
 }

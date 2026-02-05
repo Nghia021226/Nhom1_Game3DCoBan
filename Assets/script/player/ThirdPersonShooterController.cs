@@ -32,6 +32,11 @@ public class ThirdPersonShooterController : MonoBehaviour
     [Header("UI Settings")]
     [SerializeField] private GameObject crosshairUI; // Kéo cái hình tâm ngắm trên Canvas vào đây
 
+    [Header("Ammo Settings")]
+    [SerializeField] private int currentAmmo = 20; // Lượng đạn hiện tại
+    [SerializeField] private int maxAmmo = 20;     // Lượng đạn tối đa trong băng
+    [SerializeField] private AudioClip dryFireSound; // Âm thanh laze xịt (Dry Fire)
+
     private StarterAssetsInputs starterAssetsInputs;
     private ThirdPersonController thirdPersonController;
     private Animator animator;
@@ -102,22 +107,44 @@ public class ThirdPersonShooterController : MonoBehaviour
         // Chỉ cho bắn nếu: Nhấn chuột trái + Đang ngắm + Đang có súng
         if (starterAssetsInputs.shoot)
         {
-            if (isCurrentlyAiming)
+            if (isCurrentlyAiming) // Vẫn cho phép nhắm
             {
-                // --- PHẦN THÊM MỚI: PHÁT ÂM THANH ---
-                if (audioSource != null && laserShootSound != null)
+                if (currentAmmo > 0) // Kiểm tra còn đạn không
                 {
-                    // Mẹo nhỏ: Đổi pitch ngẫu nhiên một chút để tiếng súng nghe không bị chán
-                    audioSource.pitch = Random.Range(0.9f, 1.1f);
-                    audioSource.PlayOneShot(laserShootSound, volume);
-                }
+                    // --- LOGIC BẮN BÌNH THƯỜNG ---
+                    currentAmmo--; // Trừ đạn
+                    if (audioSource != null && laserShootSound != null)
+                    {
+                        audioSource.pitch = Random.Range(0.9f, 1.1f);
+                        audioSource.PlayOneShot(laserShootSound, volume);
+                    }
 
-                Vector3 aimDir = (mouseWorldPosition - spawnBulletPosition.position).normalized;
-                Instantiate(pfBulletProjectTile, spawnBulletPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
+                    Vector3 aimDir = (mouseWorldPosition - spawnBulletPosition.position).normalized;
+                    Instantiate(pfBulletProjectTile, spawnBulletPosition.position, Quaternion.LookRotation(aimDir, Vector3.up));
+                }
+                else
+                {
+                    // --- LOGIC KHI HẾT ĐẠN (LAZE XỊT) ---
+                    if (audioSource != null && dryFireSound != null)
+                    {
+                        // Chỉ phát tiếng xịt nếu chưa phát (tránh bị spam tiếng click quá nhanh)
+                        if (!audioSource.isPlaying)
+                        {
+                            audioSource.PlayOneShot(dryFireSound, volume);
+                        }
+                    }
+                    Debug.Log("Hết đạn rồi!");
+                }
             }
 
             // Reset input bắn dù có bắn được hay không để tránh kẹt phím
             starterAssetsInputs.shoot = false;
         }
+    }
+
+    public void AddAmmo(int amount)
+    {
+        currentAmmo = Mathf.Min(currentAmmo + amount, maxAmmo);
+        Debug.Log($"Đã nạp thêm {amount} đạn. Hiện có: {currentAmmo}");
     }
 }
