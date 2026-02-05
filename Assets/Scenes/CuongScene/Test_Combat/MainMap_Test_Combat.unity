@@ -16298,31 +16298,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 53.60749
+      value: 56.81449
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.761304
+      value: 1.5503038
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 448.78586
+      value: 462.59485
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.029562134
+      value: 0.059950434
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.04073793
+      value: -0.058220692
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.67260945
+      value: -0.99629843
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.7382839
+      value: 0.02014252
       objectReference: {fileID: 0}
     - target: {fileID: 8944336655422409503, guid: f6d148d888ffbf54b9afe9936dfaec1f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -30065,7 +30065,7 @@ PrefabInstance:
       objectReference: {fileID: 571318666}
     - target: {fileID: 8700669673776357714, guid: 7d6451059caeb7b469c69e46d9fae319, type: 3}
       propertyPath: firstTimeDuration
-      value: 15
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 8700669673776357714, guid: 7d6451059caeb7b469c69e46d9fae319, type: 3}
       propertyPath: normalCycleDuration
@@ -37991,6 +37991,19 @@ MonoBehaviour:
   ammoLootPrefab: {fileID: 5425803082847912830, guid: 345f7f6f424c4554f8b3020f60abe57f, type: 3}
   lootHeightOffset: 0.3
   lootSpawnDelay: 4
+  respawnTime: 10
+  patrolData: {fileID: 1576071583}
+--- !u!114 &1576071583 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3704466872015166423, guid: 12228c005b75f9a42a08614ca7875061, type: 3}
+  m_PrefabInstance: {fileID: 876488924}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47249741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78dbcb2212a73e343bdff0c914abc8e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1578531281
 GameObject:
   m_ObjectHideFlags: 0
