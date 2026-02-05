@@ -4,7 +4,7 @@ using UnityEngine;
 public class EnemyPatrolData : MonoBehaviour
 {
     [Header("Kéo thả các điểm Waypoint vào đây")]
-    [SerializeField] List<Transform> patrolPoints; 
+    public List<Transform> patrolPoints; 
 
     private int _lastIndex = -1; // Biến lưu lại điểm vừa đi qua
 

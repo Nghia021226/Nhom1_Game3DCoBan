@@ -49,10 +49,10 @@ public partial class MoveToPlayerAction : Action
         EnemySound soundScript = GameObject.GetComponent<EnemySound>();
         if (soundScript != null) soundScript.PlayAlertSound();
 
-        // Bật nhạc rượt đuổi
+        // Bật nhạc rượt đuổi và truyền GameObject vào
         if (MusicManager.instance != null)
         {
-            MusicManager.instance.StartChase();
+            MusicManager.instance.StartChase(GameObject); // Truyền GameObject của Action này
             hasStartedChase = true;
         }
 
@@ -124,10 +124,10 @@ public partial class MoveToPlayerAction : Action
 
     protected override void OnEnd()
     {
-        // Tắt nhạc rượt đuổi khi hành động này kết thúc
+        // Tắt nhạc rượt đuổi khi hành động kết thúc
         if (hasStartedChase && MusicManager.instance != null)
         {
-            MusicManager.instance.StopChase();
+            MusicManager.instance.StopChase(GameObject); // Truyền GameObject để xóa khỏi danh sách
             hasStartedChase = false;
         }
     }

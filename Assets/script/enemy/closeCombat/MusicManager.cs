@@ -1,70 +1,63 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic; // Thêm thư viện này để dùng HashSet
 
 public class MusicManager : MonoBehaviour
 {
     public static MusicManager instance;
 
     [Header("Cài đặt Nhạc")]
-    [SerializeField] AudioSource bgmSource;      
-    [SerializeField] AudioClip normalMusic;      
-    [SerializeField] AudioClip chaseMusic;       
+    [SerializeField] AudioSource bgmSource;
+    [SerializeField] AudioClip normalMusic;
+    [SerializeField] AudioClip chaseMusic;
 
-    [Header("Thông số (Chỉ để xem)")]
-    public int enemyChasingCount = 0;  
+    // Thay đổi từ int sang HashSet để quản lý chính xác từng GameObject
+    private HashSet<GameObject> chasingEnemies = new HashSet<GameObject>();
 
     void Awake()
     {
-        // Tạo Singleton để gọi từ bất kỳ đâu
         if (instance == null) instance = this;
         else Destroy(gameObject);
     }
 
     void Start()
     {
-        
         SwitchMusic(normalMusic);
     }
 
-    // Hàm này gọi khi Quái bắt đầu đuổi
-    public void StartChase()
+    // Nhận thêm tham số GameObject để biết chính xác quái nào đang đuổi
+    public void StartChase(GameObject enemy)
     {
-        enemyChasingCount++;
-
-        // Nếu đây là con quái ĐẦU TIÊN phát hiện -> Đổi nhạc Chase ngay
-        if (enemyChasingCount == 1)
+        if (chasingEnemies.Add(enemy)) // Chỉ thực hiện nếu quái này chưa có trong danh sách
         {
-            SwitchMusic(chaseMusic);
+            if (chasingEnemies.Count == 1)
+            {
+                SwitchMusic(chaseMusic);
+            }
         }
     }
 
-    // Hàm này gọi khi Quái bỏ cuộc 
-    public void StopChase()
+    // Xóa quái khỏi danh sách khi nó ngừng đuổi hoặc chết
+    public void StopChase(GameObject enemy)
     {
-        enemyChasingCount--;
-
-        // Giữ số không bao giờ âm
-        if (enemyChasingCount < 0) enemyChasingCount = 0;
-
-        
-        if (enemyChasingCount == 0)
+        if (chasingEnemies.Remove(enemy)) // Chỉ thực hiện nếu quái này có trong danh sách
         {
-            SwitchMusic(normalMusic);
+            if (chasingEnemies.Count == 0)
+            {
+                SwitchMusic(normalMusic);
+            }
         }
     }
 
-    
     void SwitchMusic(AudioClip newClip)
     {
         if (bgmSource == null) return;
-
         if (newClip == null)
         {
             bgmSource.Stop();
             bgmSource.clip = null;
             return;
         }
-
         if (bgmSource.clip == newClip && bgmSource.isPlaying) return;
 
         bgmSource.clip = newClip;

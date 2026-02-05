@@ -12,12 +12,21 @@ public class EnemyStats : MonoBehaviour, IDamageable
     private BehaviorGraphAgent behaviorAgent;
 
     [Header("Loot Settings")]
-    [SerializeField] private GameObject ammoLootPrefab; // Kéo Prefab hòm đạn vào đây
+    [SerializeField] private GameObject ammoLootPrefab;
     [SerializeField] private float lootHeightOffset = 0.5f;
     [SerializeField] private float lootSpawnDelay = 1.5f;
 
+    [Header("Respawn Settings")]
+    [SerializeField] private float respawnTime = 10f;
+    [SerializeField] private EnemyPatrolData patrolData;
+    private Vector3 spawnPos;
+    private Quaternion spawnRot;
+
     void Start()
     {
+        spawnPos = transform.position;
+        spawnRot = transform.rotation;
+
         anim = GetComponent<Animator>();
         behaviorAgent = GetComponent<BehaviorGraphAgent>();
         if (data != null) currentHealth = data.maxHealth;
@@ -28,7 +37,6 @@ public class EnemyStats : MonoBehaviour, IDamageable
         if (isDead) return;
         currentHealth -= damage;
 
-        // Bật phát hiện ngay lập tức
         if (behaviorAgent != null)
             behaviorAgent.SetVariableValue("IsDetected", true);
 
@@ -41,7 +49,6 @@ public class EnemyStats : MonoBehaviour, IDamageable
     {
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
 
-        // 1. ÉP TẮT CÁC ANIMATION CŨ ĐỂ "HIT" ĐƯỢC ƯU TIÊN
         if (anim != null)
         {
             anim.SetBool("IsWalk", false);
@@ -49,41 +56,113 @@ public class EnemyStats : MonoBehaviour, IDamageable
             anim.SetTrigger("Hit");
         }
 
-        // 2. KHỰNG LẠI (0.2 giây là đủ để thấy uy lực súng)
-        if (agent != null) agent.isStopped = true;
+        // Kiểm tra an toàn trước khi dừng
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+            agent.isStopped = true;
 
         yield return new WaitForSeconds(0.2f);
 
-        if (!isDead && agent != null) agent.isStopped = false;
+        if (!isDead && agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+            agent.isStopped = false;
     }
 
     void Die()
     {
+        if (isDead) return;
         isDead = true;
-        if (anim != null) anim.SetTrigger("Die");
-        if (behaviorAgent != null) behaviorAgent.SetVariableValue("IsDead", true);
-        GetComponent<Collider>().enabled = false;
-        GetComponent<NavMeshAgent>().isStopped = true;
-        
-        StartCoroutine(SpawnLootRoutine());
 
-        Destroy(gameObject, 5f);
+        if (anim != null) anim.SetTrigger("Die");
+
+        // ÉP DỪNG NHẠC TRUY ĐUỔI NGAY LẬP TỨC KHI CHẾT
+        if (MusicManager.instance != null)
+        {
+            MusicManager.instance.StopChase(gameObject); // Báo cho MusicManager biết con quái này đã "nghỉ hưu"
+        }
+
+        // 1. TẮT NÃO NGAY LẬP TỨC
+        if (behaviorAgent != null)
+        {
+            behaviorAgent.SetVariableValue("IsDead", true);
+            behaviorAgent.enabled = false;
+        }
+
+        // 2. DỪNG AGENT AN TOÀN
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+
+        // 3. VÔ HIỆU HÓA THÂN THỂ
+        if (agent != null) agent.enabled = false;
+        GetComponent<Collider>().enabled = false;
+
+        StartCoroutine(SpawnLootRoutine());
+        StartCoroutine(RespawnRoutine());
     }
 
     private IEnumerator SpawnLootRoutine()
     {
-        // Chờ một khoảng thời gian bằng với thời gian animation chết
         yield return new WaitForSeconds(lootSpawnDelay);
 
         if (ammoLootPrefab != null)
         {
             Vector3 spawnPosition = transform.position + Vector3.up * lootHeightOffset;
             Instantiate(ammoLootPrefab, spawnPosition, Quaternion.identity);
-            Debug.Log("<color=green>Loot spawned after delay!</color>");
+        }
+    }
+
+    IEnumerator RespawnRoutine()
+    {
+        yield return new WaitForSeconds(5f);
+
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        if (agent != null) agent.enabled = false;
+
+        transform.position = new Vector3(0, -100, 0);
+
+        yield return new WaitForSeconds(respawnTime);
+
+        // CHỌN VỊ TRÍ HỒI SINH TỪ PATROL DATA
+        if (patrolData != null && patrolData.patrolPoints != null && patrolData.patrolPoints.Count > 0)
+        {
+            int randomIndex = Random.Range(0, patrolData.patrolPoints.Count);
+            Transform targetPoint = patrolData.patrolPoints[randomIndex];
+
+            if (targetPoint != null)
+            {
+                transform.position = targetPoint.position;
+                transform.rotation = targetPoint.rotation;
+            }
         }
         else
         {
-            Debug.LogError("Thiếu prefab hòm đạn trong Inspector!");
+            transform.position = spawnPos;
+            transform.rotation = spawnRot;
         }
+
+        currentHealth = data.maxHealth;
+        isDead = false;
+
+        GetComponent<Collider>().enabled = true;
+
+        // BẬT LẠI THÂN THỂ
+        if (agent != null)
+        {
+            agent.enabled = true;
+            agent.Warp(transform.position);
+        }
+
+        // BẬT LẠI NÃO
+        if (behaviorAgent != null)
+        {
+            behaviorAgent.enabled = true;
+            behaviorAgent.SetVariableValue("IsDead", false);
+        }
+
+        if (anim != null) anim.Play("Idle");
+
+        Debug.Log($"{gameObject.name} đã hồi sinh thành công!");
     }
 }
