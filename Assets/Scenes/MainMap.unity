@@ -4185,7 +4185,7 @@ MonoBehaviour:
   cutsceneCamHolder: {fileID: 672696907}
   skipHintObject: {fileID: 844126381}
   timeShowHint: 3
-  johnVoiceSource: {fileID: 962784131}
+  johnVoiceSource: {fileID: 0}
   delayToPlayVoice: 0.1
 --- !u!95 &102440135
 Animator:
@@ -24417,11 +24417,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!82 &962784131 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 188848255680654873, guid: 7f861e6fc41e17445b86c8389443db59, type: 3}
-  m_PrefabInstance: {fileID: 572666062486871629}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &965537922
 GameObject:
   m_ObjectHideFlags: 0
@@ -50330,6 +50325,7 @@ MonoBehaviour:
   audioSource: {fileID: 1968945595}
   laserShootSound: {fileID: 8300000, guid: e7baaa90195682e4e91468ee60c3eb5d, type: 3}
   dryFireSound: {fileID: 8300000, guid: 4e55fb298de41c943a31272640d9ef78, type: 3}
+  reloadSound: {fileID: 8300000, guid: ad90dcd41be6edc49b18bc9c5331d0ab, type: 3}
   volume: 1
   rig1: {fileID: 923616377}
   rig2: {fileID: 613732285}
@@ -50337,9 +50333,9 @@ MonoBehaviour:
   gunUIGroup: {fileID: 182929874}
   ammoText: {fileID: 182929873}
   reloadProgressCircle: {fileID: 182929872}
-  currentAmmo: 10
+  currentAmmo: 5
   maxAmmo: 20
-  reserveAmmo: 20
+  reserveAmmo: 7
   reloadTime: 2
   fireRate: 2
 --- !u!114 &1968945593
@@ -54506,6 +54502,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2751184380228692831, guid: 50599430137dbdd478aab2760982ab3c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 147
+      objectReference: {fileID: 0}
     - target: {fileID: 5676084597614184180, guid: 50599430137dbdd478aab2760982ab3c, type: 3}
       propertyPath: m_Name
       value: HowToPanel
@@ -54519,8 +54519,8 @@ PrefabInstance:
       value: "C\xE1ch Ch\u01A1i:\n\r\nW A S D \u2013 Di chuy\u1EC3n\r\nSpace \u2013
         Nh\u1EA3y\r\nShift \u2013 Ch\u1EA1y nhanh\r\nE ho\u1EB7c F \u2013 T\u01B0\u01A1ng
         t\xE1c\r\nL \u2013 \u0110\xE8n pin\nQ - Ph\xF3ng to\nJ - M\u1EDF/T\u1EAFt
-        camera\nLCtrl - L\xE9n l\xFAt\n\n\nNh\u1EA5n H \u0111\u1EC3 \u0111\xF3ng
-        / m\u1EDF b\u1EA3ng h\u01B0\u1EDBng d\u1EABn"
+        camera\nLCtrl - L\xE9n l\xFAt\nR - N\u1EA1p \u0111\u1EA1n\n\n\nNh\u1EA5n
+        H \u0111\u1EC3 \u0111\xF3ng / m\u1EDF b\u1EA3ng h\u01B0\u1EDBng d\u1EABn"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

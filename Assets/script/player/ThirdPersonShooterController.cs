@@ -24,6 +24,7 @@ public class ThirdPersonShooterController : MonoBehaviour
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip laserShootSound;
     [SerializeField] private AudioClip dryFireSound;
+    [SerializeField] private AudioClip reloadSound;
     [Range(0f, 2f)][SerializeField] private float volume = 1f;
 
     [Header("Animation Rigging")]
@@ -178,6 +179,12 @@ public class ThirdPersonShooterController : MonoBehaviour
     IEnumerator ReloadRoutine()
     {
         isReloading = true;
+
+        // PHÁT ÂM THANH NẠP ĐẠN NGAY KHI BẮT ĐẦU
+        if (audioSource != null && reloadSound != null)
+        {
+            audioSource.PlayOneShot(reloadSound, volume);
+        }
 
         // CHỈ HIỆN VÒNG TRÒN RELOAD KHI BẮT ĐẦU NẠP
         if (reloadProgressCircle != null)
