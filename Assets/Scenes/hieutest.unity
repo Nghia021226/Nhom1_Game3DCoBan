@@ -34729,6 +34729,25 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &1420105211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1420105200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8eaa85f123b4f4a4ebe37806435d7dcc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpDamage: 40
+  handDamage: 20
+  biteDamage: 10
+  attackRange: 2
+  attackPoint: {fileID: 0}
+  damageStartTime: 0.3
+  damageEndTime: 0.6
 --- !u!1 &1420464584
 GameObject:
   m_ObjectHideFlags: 0
@@ -37749,7 +37768,7 @@ GameObject:
   - component: {fileID: 1566912526}
   m_Layer: 13
   m_Name: Player
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -54896,6 +54915,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5981218730283738843, guid: f3978c44f7fb36246b698fdea7f77528, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1420105204}
+    - targetCorrespondingSourceObject: {fileID: 5981218730283738843, guid: f3978c44f7fb36246b698fdea7f77528, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1420105211}
   m_SourcePrefab: {fileID: 100100000, guid: f3978c44f7fb36246b698fdea7f77528, type: 3}
 --- !u!1 &2132741026 stripped
 GameObject:
@@ -56573,6 +56595,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6483118324291249264, guid: dd38b793a2a0d5c4f8d8e8998824883d, type: 3}
+      propertyPath: itemIcon
+      value: 
+      objectReference: {fileID: 21300000, guid: 2daea94ad4ac7284a9458e753fc8db2a, type: 3}
     - target: {fileID: 7372231616100903333, guid: dd38b793a2a0d5c4f8d8e8998824883d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 85.605
