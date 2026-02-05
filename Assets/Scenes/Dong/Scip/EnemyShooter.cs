@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyShooter : MonoBehaviour
 {
@@ -14,20 +14,19 @@ public class EnemyShooter : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
-    public void Shoot()
+    // Gọi khi enemy quyết định tấn công
+    public void StartAttack()
     {
         if (Time.time < nextFireTime) return;
 
         nextFireTime = Time.time + fireRate;
-
-        anim.SetBool("Attack", true);
-        Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-
-        Invoke(nameof(ResetAttack), 0.2f);
+        anim.SetTrigger("Attack");
     }
 
-    void ResetAttack()
+    // === ANIMATION EVENT ===
+    // Gắn event này vào frame bắn trong animation
+    public void Shoot()
     {
-        anim.SetBool("Attack", false);
+        Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
     }
 }
