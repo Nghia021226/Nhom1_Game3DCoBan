@@ -34744,10 +34744,126 @@ MonoBehaviour:
   jumpDamage: 40
   handDamage: 20
   biteDamage: 10
-  attackRange: 2
+  attackRange: 3.38
   attackPoint: {fileID: 0}
-  damageStartTime: 0.3
-  damageEndTime: 0.6
+  attackTriggerTime: 0.3
+  eatTriggerTime: 0.26
+--- !u!114 &1420105213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1420105200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 314cbe7b280a4d24ab157ef219b6eff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfxSource: {fileID: 1420105214}
+  idleGrowlClip: {fileID: 8300000, guid: e3796df4c90ffec4c8615bf47b50dd92, type: 3}
+  growlVolume: 0.326
+  jumpAttackClip: {fileID: 8300000, guid: 8739bcaa46ae0c24cb15feb7413f9c81, type: 3}
+  biteAttackClip: {fileID: 8300000, guid: c2461d2c560289b44a84568c81670702, type: 3}
+  handAttackClip: {fileID: 8300000, guid: 51f870d01b2848941bf86d987ae0424a, type: 3}
+  eatClip: {fileID: 8300000, guid: 1c8764b4a33402a46966075c34b67c0c, type: 3}
+--- !u!82 &1420105214
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1420105200}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 766.32
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1420464584
 GameObject:
   m_ObjectHideFlags: 0
@@ -38131,6 +38247,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 81bb619796e042f4e8ecde9c6a3e3e4d, type: 2}
+  ammoLootPrefab: {fileID: 0}
+  lootHeightOffset: 0.5
+  lootSpawnDelay: 1.5
+  respawnTime: 10
+  patrolData: {fileID: 0}
 --- !u!1 &1578531281
 GameObject:
   m_ObjectHideFlags: 0
@@ -50512,14 +50633,22 @@ MonoBehaviour:
   debugTransform: {fileID: 8112078111383425134, guid: ec57b3e5867cc174f84179d6e9478525, type: 3}
   pfBulletProjectTile: {fileID: 7623765492684831524, guid: f466d5d329137444d900ee703605b566, type: 3}
   spawnBulletPosition: {fileID: 829278287631194088}
-  vfxHitGreen: {fileID: 2203998868706470901, guid: 2cecd1550a2fbba47b71302266bb4ea1, type: 3}
-  vfxHitRed: {fileID: 405389230732083210, guid: 7e6d58b6fdc4cdb468e6a27375085e4c, type: 3}
   audioSource: {fileID: 1968945595}
   laserShootSound: {fileID: 8300000, guid: e7baaa90195682e4e91468ee60c3eb5d, type: 3}
+  dryFireSound: {fileID: 0}
+  reloadSound: {fileID: 0}
   volume: 1
   rig1: {fileID: 923616377}
   rig2: {fileID: 613732285}
   crosshairUI: {fileID: 395802467}
+  gunUIGroup: {fileID: 0}
+  ammoText: {fileID: 0}
+  reloadProgressCircle: {fileID: 0}
+  currentAmmo: 20
+  maxAmmo: 20
+  reserveAmmo: 60
+  reloadTime: 2
+  fireRate: 5
 --- !u!114 &1968945593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54918,6 +55047,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5981218730283738843, guid: f3978c44f7fb36246b698fdea7f77528, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1420105211}
+    - targetCorrespondingSourceObject: {fileID: 5981218730283738843, guid: f3978c44f7fb36246b698fdea7f77528, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1420105214}
+    - targetCorrespondingSourceObject: {fileID: 5981218730283738843, guid: f3978c44f7fb36246b698fdea7f77528, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1420105213}
   m_SourcePrefab: {fileID: 100100000, guid: f3978c44f7fb36246b698fdea7f77528, type: 3}
 --- !u!1 &2132741026 stripped
 GameObject:
@@ -56601,7 +56736,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 2daea94ad4ac7284a9458e753fc8db2a, type: 3}
     - target: {fileID: 7372231616100903333, guid: dd38b793a2a0d5c4f8d8e8998824883d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 85.605
+      value: 55.78
       objectReference: {fileID: 0}
     - target: {fileID: 7372231616100903333, guid: dd38b793a2a0d5c4f8d8e8998824883d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -56609,7 +56744,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7372231616100903333, guid: dd38b793a2a0d5c4f8d8e8998824883d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 434.968
+      value: 447.18
       objectReference: {fileID: 0}
     - target: {fileID: 7372231616100903333, guid: dd38b793a2a0d5c4f8d8e8998824883d, type: 3}
       propertyPath: m_LocalRotation.w
