@@ -10109,6 +10109,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ceiling Light Bright (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 6067516794572113890, guid: ddfc1292959bce64f8c5c758157712f1, type: 3}
+      propertyPath: m_Range
+      value: 71.79
+      objectReference: {fileID: 0}
+    - target: {fileID: 6067516794572113890, guid: ddfc1292959bce64f8c5c758157712f1, type: 3}
+      propertyPath: m_Intensity
+      value: 35.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -34646,7 +34654,7 @@ MonoBehaviour:
           m_Value0: 9277775056362873791
           m_Value1: 4702205780493204445
         Name: TargetFood
-        m_Value: {fileID: 987604390337109053, guid: 9eba66b535bda884788a9efc5b7e7543, type: 3}
+        m_Value: {fileID: 0}
     - rid: 5988313173898298332
       type: {class: 'BlackboardVariable`1[[UnityEngine.Animator, UnityEngine.AnimationModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -34664,7 +34672,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1420105200}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: 055d3fd7bd3901042a44bb13f3160e0e, type: 3}
   m_Controller: {fileID: 9100000, guid: 355502ed147ce0f44b33d9c7ab1dca06, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -34708,10 +34716,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1
+  m_Radius: 1.0043025
+  m_Height: 6.2553306
   m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: -0.032019615, y: 2.6276646, z: 0.2887416}
 --- !u!114 &1420105208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34724,7 +34732,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc15c7aba1736254cba524e833e2a898, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionRadius: 11.1
+  detectionRadius: 7.83
   foodLayer:
     serializedVersion: 2
     m_Bits: 32768
@@ -34740,10 +34748,10 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5
-  m_Acceleration: 8
+  m_Acceleration: 256.26
   avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_AngularSpeed: 500
+  m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -42297,6 +42305,14 @@ PrefabInstance:
     - target: {fileID: 4208926559941835536, guid: ddfc1292959bce64f8c5c758157712f1, type: 3}
       propertyPath: m_Name
       value: Ceiling Light Bright (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6067516794572113890, guid: ddfc1292959bce64f8c5c758157712f1, type: 3}
+      propertyPath: m_Range
+      value: 31.99
+      objectReference: {fileID: 0}
+    - target: {fileID: 6067516794572113890, guid: ddfc1292959bce64f8c5c758157712f1, type: 3}
+      propertyPath: m_Intensity
+      value: 20.9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
