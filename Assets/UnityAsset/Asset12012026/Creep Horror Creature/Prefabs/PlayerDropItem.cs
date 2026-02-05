@@ -2,13 +2,16 @@
 
 public class PlayerDropItem : MonoBehaviour
 {
-    [Header("Cài đặt")]
-    public Transform dropPoint; // Vị trí thả (Kéo cái chân hoặc tạo GameObject rỗng dưới chân)
-    public float dropOffset = 0.5f; // Độ cao thả so với chân (để không bị kẹt xuống đất)
+    [Header("Cài đặt Vị Trí")]
+    public Transform dropPoint;
+    public float dropOffset = 0.5f;
+
+    [Header("Cài đặt Góc Xoay (Quan trọng)")]
+    // Mặc định thử để -90 hoặc 90 ở trục X. Bro chỉnh số này trong Inspector nhé!
+    public Vector3 spawnRotation = new Vector3(-90, 0, 0);
 
     void Update()
     {
-        // Kiểm tra: Nếu đang cầm thịt VÀ nhấn F
         if (GameManager.instance.hasMeat && Input.GetKeyDown(KeyCode.F))
         {
             DropMeat();
@@ -23,13 +26,14 @@ public class PlayerDropItem : MonoBehaviour
             return;
         }
 
-        // 1. Tính vị trí thả (Dưới chân Player một chút về phía trước)
+        // 1. Tính vị trí thả
         Vector3 spawnPos = transform.position + (transform.forward * 1.0f) + (Vector3.up * dropOffset);
 
-        // 2. Tạo ra cục thịt mới
-        Instantiate(GameManager.instance.meatPrefab, spawnPos, Quaternion.identity);
+        // 2. TẠO RA VỚI GÓC XOAY TÙY CHỈNH (Thay vì Quaternion.identity)
+        // Quaternion.Euler biến 3 số (x,y,z) thành góc xoay
+        Instantiate(GameManager.instance.meatPrefab, spawnPos, Quaternion.Euler(spawnRotation));
 
-        // 3. Reset trạng thái
+        // 3. Reset
         GameManager.instance.hasMeat = false;
         Debug.Log("Đã thả thịt xuống đất!");
     }

@@ -4,7 +4,7 @@ public class MeatItem : InteractableObject
 {
     public override string GetHintText()
     {
-        return "Giữ E để nhặt Thịt";
+        return "Giữ E để nhặt tô mì";
     }
 
     public override void PerformAction()
@@ -18,7 +18,7 @@ public class MeatItem : InteractableObject
 
         // 2. Cập nhật trạng thái logic
         GameManager.instance.hasMeat = true;
-        GameManager.instance.ShowHint("Đã nhặt thịt! (Nhấn F để thả)");
+        GameManager.instance.ShowHint("Đã nhặt mì! (Nhấn F để thả)");
         PlayInteractSound();
 
         // --- DÒNG MỚI THÊM: CẬP NHẬT UI ---
