@@ -5,17 +5,25 @@ using UnityEngine;
 public class BossShieldSkill : MonoBehaviour
 {
     [Header("--- Cài đặt Boss & Khiên ---")]
-    public Transform bossCenter;          // Tâm Boss (ngực/bụng)
-    public GameObject shieldObject;       // Cục Sphere (Giáp)
-    public float shieldMaxSize = 3.0f;    // Kích thước giáp
-    public float scaleSpeed = 2.0f;       // Tốc độ hiện giáp
+    public Transform bossCenter;
+    public GameObject shieldObject;
+    public float shieldMaxSize = 3.0f;
+    public float scaleSpeed = 2.0f;
 
     [Header("--- Cài đặt Điểm Neo Tường ---")]
-    public GameObject[] allWallAnchors;   // Các điểm trên tường
-    public int anchorsToActivate = 3;     // Số lượng cần kích hoạt
+    public GameObject[] allWallAnchors;
+    public int anchorsToActivate = 3;
 
-    [Header("--- Cài đặt Dây (Đơn giản) ---")]
-    public GameObject beam3DPrefab;       // Prefab dây (Particle System cũ)
+    [Header("--- Cài đặt Dây ---")]
+    public GameObject beam3DPrefab;
+
+    // ==========================================
+    // PHẦN MỚI THÊM: CÀI ĐẶT ÂM THANH
+    // ==========================================
+    [Header("--- Cài đặt Âm thanh (MỚI) ---")]
+    public AudioSource shieldAudioSource; // Kéo BossShieldObject (đã gắn AudioSource) vào đây
+    public AudioClip shieldActivateSound; // Kéo file âm thanh "Bùm" khi bật khiên vào đây
+    [Range(0f, 1f)] public float shieldVolume = 1.0f;
 
     // --- Biến nội bộ ---
     private List<GameObject> activeBeams = new List<GameObject>();
@@ -55,7 +63,7 @@ public class BossShieldSkill : MonoBehaviour
     {
         isShieldActive = true;
 
-        // BƯỚC 1: Chọn ngẫu nhiên điểm neo trên tường
+        // BƯỚC 1: Chọn ngẫu nhiên điểm neo
         List<GameObject> shuffledAnchors = new List<GameObject>(allWallAnchors);
         for (int i = 0; i < shuffledAnchors.Count; i++)
         {
@@ -77,20 +85,25 @@ public class BossShieldSkill : MonoBehaviour
                 anchor.SetActive(true);
                 currentActiveAnchors++;
 
-                // Gắn script máu cho neo
                 var anchorScript = anchor.GetComponent<ShieldAnchor>();
                 if (anchorScript == null) anchorScript = anchor.AddComponent<ShieldAnchor>();
                 anchorScript.Setup(this);
 
-                // Tạo dây nối (Code mới siêu gọn)
                 StartCoroutine(SpawnSimpleBeam(anchor.transform));
             }
         }
 
-        // BƯỚC 3: Phình to Giáp Boss
+        // BƯỚC 3: Phình to Giáp Boss & PHÁT ÂM THANH
         if (shieldObject != null)
         {
             shieldObject.SetActive(true);
+
+            // ---> PHÁT ÂM THANH TẠI ĐÂY <---
+            if (shieldAudioSource != null && shieldActivateSound != null)
+            {
+                shieldAudioSource.PlayOneShot(shieldActivateSound, shieldVolume);
+            }
+
             float timer = 0f;
             while (timer < 1f)
             {
@@ -111,31 +124,23 @@ public class BossShieldSkill : MonoBehaviour
         DeactivateShield();
     }
 
-    // --- HÀM TẠO DÂY ĐÃ ĐƯỢC ĐƠN GIẢN HÓA ---
     IEnumerator SpawnSimpleBeam(Transform anchorTransform)
     {
         if (beam3DPrefab == null || bossCenter == null) yield break;
 
-        // 1. Tạo dây tại vị trí tường
+        // Tạo dây (Âm thanh dây sẽ tự phát nhờ cài đặt trên Prefab - Xem hướng dẫn bên dưới)
         GameObject beam = Instantiate(beam3DPrefab, anchorTransform.position, Quaternion.identity);
         activeBeams.Add(beam);
 
-        // 2. Xoay dây nhìn về phía Boss ngay lập tức
         beam.transform.LookAt(bossCenter);
 
-        // 3. Vòng lặp duy trì sự tồn tại của dây (Không scale, không chỉnh vị trí)
         while (isShieldActive && beam != null && anchorTransform != null)
         {
-            // Nếu Boss có nhúc nhích nhẹ (idle animation), cập nhật hướng nhìn cho chuẩn
             beam.transform.LookAt(bossCenter);
-
-            // Giữ nguyên vị trí tại neo
             beam.transform.position = anchorTransform.position;
-
             yield return null;
         }
 
-        // 4. Hủy dây khi xong
         if (beam != null) Destroy(beam);
     }
 
@@ -153,14 +158,12 @@ public class BossShieldSkill : MonoBehaviour
     {
         if (shieldCollider) shieldCollider.enabled = false;
 
-        // Xóa hết dây
         foreach (var beam in activeBeams)
         {
             if (beam != null) Destroy(beam);
         }
         activeBeams.Clear();
 
-        // Thu nhỏ giáp rồi tắt
         if (shieldObject != null)
         {
             float startScale = shieldObject.transform.localScale.x;
