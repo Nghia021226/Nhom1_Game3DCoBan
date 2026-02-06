@@ -28,7 +28,7 @@ public class BulletMover : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") || other.CompareTag("Wall"))
+        if (other.CompareTag("Player") )
         {
             Destroy(gameObject);
         }
