@@ -21218,6 +21218,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1916235479}
     - target: {fileID: 3950498348869572926, guid: 12228c005b75f9a42a08614ca7875061, type: 3}
+      propertyPath: attackRange
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3950498348869572926, guid: 12228c005b75f9a42a08614ca7875061, type: 3}
       propertyPath: restartButton
       value: 
       objectReference: {fileID: 1916235481}
@@ -38436,6 +38440,8 @@ MonoBehaviour:
   lootSpawnDelay: 4
   respawnTime: 10
   patrolData: {fileID: 876488925}
+  maxStunTimes: 2
+  stunResetTime: 5
 --- !u!1 &1578531281
 GameObject:
   m_ObjectHideFlags: 0
@@ -50820,9 +50826,9 @@ MonoBehaviour:
   gunUIGroup: {fileID: 182929874}
   ammoText: {fileID: 182929873}
   reloadProgressCircle: {fileID: 182929872}
-  currentAmmo: 5
+  currentAmmo: 15
   maxAmmo: 20
-  reserveAmmo: 7
+  reserveAmmo: 50
   reloadTime: 2
   fireRate: 2
 --- !u!114 &1968945593
