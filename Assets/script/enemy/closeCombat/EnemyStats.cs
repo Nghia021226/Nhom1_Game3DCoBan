@@ -22,6 +22,12 @@ public class EnemyStats : MonoBehaviour, IDamageable
     private Vector3 spawnPos;
     private Quaternion spawnRot;
 
+    [Header("Combat Settings (MỚI)")]
+    [SerializeField] private int maxStunTimes = 2; // Chỉ bị choáng 2 viên đầu
+    [SerializeField] private float stunResetTime = 5f; // Nếu không bị bắn trong 5s, sẽ reset lại giáp
+    private int currentStunCount = 0;
+    private float lastHitTime = 0f;
+
     void Start()
     {
         spawnPos = transform.position;
@@ -35,12 +41,36 @@ public class EnemyStats : MonoBehaviour, IDamageable
     public void TakeDamage(float damage)
     {
         if (isDead) return;
+
+        // 1. Luôn luôn trừ máu dù có bị choáng hay không
         currentHealth -= damage;
 
         if (behaviorAgent != null)
             behaviorAgent.SetVariableValue("IsDetected", true);
 
-        StartCoroutine(HitStunRoutine());
+        // 2. --- LOGIC MỚI: KIỂM TRA "SUPER ARMOR" ---
+
+        // Nếu đã lâu không bị bắn (ví dụ chạy trốn xong quay lại), thì reset lại khả năng bị choáng
+        if (Time.time > lastHitTime + stunResetTime)
+        {
+            currentStunCount = 0;
+        }
+        lastHitTime = Time.time;
+
+        // Chỉ gọi Animation Stun nếu số lần bị bắn chưa vượt quá giới hạn
+        if (currentStunCount < maxStunTimes)
+        {
+            currentStunCount++;
+            StartCoroutine(HitStunRoutine());
+        }
+        else
+        {
+            // Nếu đã vượt quá giới hạn (viên thứ 3 trở đi):
+            // KHÔNG gọi HitStunRoutine() -> Quái sẽ KHÔNG đứng lại, KHÔNG diễn hoạt đau đớn
+            // Nó sẽ tiếp tục chạy thẳng vào mặt người chơi để tấn công
+            Debug.Log("Quái đang nổi điên! Không bị choáng nữa!");
+        }
+        // ---------------------------------------------
 
         if (currentHealth <= 0) Die();
     }
@@ -49,6 +79,7 @@ public class EnemyStats : MonoBehaviour, IDamageable
     {
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
 
+        // Chỉ diễn hoạt Hit nếu chưa chết
         if (anim != null)
         {
             anim.SetBool("IsWalk", false);
@@ -56,12 +87,13 @@ public class EnemyStats : MonoBehaviour, IDamageable
             anim.SetTrigger("Hit");
         }
 
-        // Kiểm tra an toàn trước khi dừng
+        // Dừng di chuyển tạm thời
         if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
             agent.isStopped = true;
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.2f); // Thời gian khựng lại ngắn thôi
 
+        // Sau khi khựng xong thì chạy tiếp ngay
         if (!isDead && agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
             agent.isStopped = false;
     }
@@ -73,20 +105,17 @@ public class EnemyStats : MonoBehaviour, IDamageable
 
         if (anim != null) anim.SetTrigger("Die");
 
-        // ÉP DỪNG NHẠC TRUY ĐUỔI NGAY LẬP TỨC KHI CHẾT
         if (MusicManager.instance != null)
         {
-            MusicManager.instance.StopChase(gameObject); // Báo cho MusicManager biết con quái này đã "nghỉ hưu"
+            MusicManager.instance.StopChase(gameObject);
         }
 
-        // 1. TẮT NÃO NGAY LẬP TỨC
         if (behaviorAgent != null)
         {
             behaviorAgent.SetVariableValue("IsDead", true);
             behaviorAgent.enabled = false;
         }
 
-        // 2. DỪNG AGENT AN TOÀN
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
         if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
         {
@@ -94,7 +123,6 @@ public class EnemyStats : MonoBehaviour, IDamageable
             agent.ResetPath();
         }
 
-        // 3. VÔ HIỆU HÓA THÂN THỂ
         if (agent != null) agent.enabled = false;
         GetComponent<Collider>().enabled = false;
 
@@ -124,7 +152,6 @@ public class EnemyStats : MonoBehaviour, IDamageable
 
         yield return new WaitForSeconds(respawnTime);
 
-        // CHỌN VỊ TRÍ HỒI SINH TỪ PATROL DATA
         if (patrolData != null && patrolData.patrolPoints != null && patrolData.patrolPoints.Count > 0)
         {
             int randomIndex = Random.Range(0, patrolData.patrolPoints.Count);
@@ -142,19 +169,19 @@ public class EnemyStats : MonoBehaviour, IDamageable
             transform.rotation = spawnRot;
         }
 
+        // --- RESET LẠI TRẠNG THÁI KHI HỒI SINH ---
         currentHealth = data.maxHealth;
+        currentStunCount = 0; // Reset lại giáp choáng
         isDead = false;
 
         GetComponent<Collider>().enabled = true;
 
-        // BẬT LẠI THÂN THỂ
         if (agent != null)
         {
             agent.enabled = true;
             agent.Warp(transform.position);
         }
 
-        // BẬT LẠI NÃO
         if (behaviorAgent != null)
         {
             behaviorAgent.enabled = true;
