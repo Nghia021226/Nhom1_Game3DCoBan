@@ -17,15 +17,11 @@ public class BossShieldSkill : MonoBehaviour
     [Header("--- Cài đặt Dây ---")]
     public GameObject beam3DPrefab;
 
-    // ==========================================
-    // PHẦN MỚI THÊM: CÀI ĐẶT ÂM THANH
-    // ==========================================
-    [Header("--- Cài đặt Âm thanh (MỚI) ---")]
-    public AudioSource shieldAudioSource; // Kéo BossShieldObject (đã gắn AudioSource) vào đây
-    public AudioClip shieldActivateSound; // Kéo file âm thanh "Bùm" khi bật khiên vào đây
+    [Header("--- Cài đặt Âm thanh ---")]
+    public AudioSource shieldAudioSource;
+    public AudioClip shieldActivateSound;
     [Range(0f, 1f)] public float shieldVolume = 1.0f;
 
-    // --- Biến nội bộ ---
     private List<GameObject> activeBeams = new List<GameObject>();
     private int currentActiveAnchors = 0;
     private bool isShieldActive = false;
@@ -33,7 +29,6 @@ public class BossShieldSkill : MonoBehaviour
 
     void Start()
     {
-        // Ẩn giáp khi bắt đầu
         if (shieldObject != null)
         {
             shieldObject.SetActive(false);
@@ -42,8 +37,8 @@ public class BossShieldSkill : MonoBehaviour
             if (shieldCollider) shieldCollider.enabled = false;
         }
 
-        // Ẩn các điểm neo
-        foreach (var anchor in allWallAnchors)
+        // Đổi var thành GameObject
+        foreach (GameObject anchor in allWallAnchors)
         {
             if (anchor != null) anchor.SetActive(false);
         }
@@ -63,7 +58,6 @@ public class BossShieldSkill : MonoBehaviour
     {
         isShieldActive = true;
 
-        // BƯỚC 1: Chọn ngẫu nhiên điểm neo
         List<GameObject> shuffledAnchors = new List<GameObject>(allWallAnchors);
         for (int i = 0; i < shuffledAnchors.Count; i++)
         {
@@ -76,7 +70,6 @@ public class BossShieldSkill : MonoBehaviour
         currentActiveAnchors = 0;
         int count = Mathf.Min(anchorsToActivate, shuffledAnchors.Count);
 
-        // BƯỚC 2: Bật Neo và Tạo Dây
         for (int i = 0; i < count; i++)
         {
             GameObject anchor = shuffledAnchors[i];
@@ -85,20 +78,21 @@ public class BossShieldSkill : MonoBehaviour
                 anchor.SetActive(true);
                 currentActiveAnchors++;
 
-                var anchorScript = anchor.GetComponent<ShieldAnchor>();
+                // Đổi var thành ShieldAnchor chuẩn xác
+                ShieldAnchor anchorScript = anchor.GetComponent<ShieldAnchor>();
                 if (anchorScript == null) anchorScript = anchor.AddComponent<ShieldAnchor>();
+
+                // Hàm Setup này giờ sẽ kiêm luôn việc bơm lại đầy máu cho cái Neo
                 anchorScript.Setup(this);
 
                 StartCoroutine(SpawnSimpleBeam(anchor.transform));
             }
         }
 
-        // BƯỚC 3: Phình to Giáp Boss & PHÁT ÂM THANH
         if (shieldObject != null)
         {
             shieldObject.SetActive(true);
 
-            // ---> PHÁT ÂM THANH TẠI ĐÂY <---
             if (shieldAudioSource != null && shieldActivateSound != null)
             {
                 shieldAudioSource.PlayOneShot(shieldActivateSound, shieldVolume);
@@ -114,13 +108,11 @@ public class BossShieldSkill : MonoBehaviour
             if (shieldCollider) shieldCollider.enabled = true;
         }
 
-        // BƯỚC 4: Chờ Player phá hết neo
         while (currentActiveAnchors > 0)
         {
             yield return null;
         }
 
-        // BƯỚC 5: Kết thúc skill
         DeactivateShield();
     }
 
@@ -128,20 +120,28 @@ public class BossShieldSkill : MonoBehaviour
     {
         if (beam3DPrefab == null || bossCenter == null) yield break;
 
-        // Tạo dây (Âm thanh dây sẽ tự phát nhờ cài đặt trên Prefab - Xem hướng dẫn bên dưới)
+        // Đẻ ra tia sét mới
         GameObject beam = Instantiate(beam3DPrefab, anchorTransform.position, Quaternion.identity);
         activeBeams.Add(beam);
 
         beam.transform.LookAt(bossCenter);
 
-        while (isShieldActive && beam != null && anchorTransform != null)
+        // --- ĐIỂM QUAN TRỌNG ĐÃ SỬA Ở ĐÂY ---
+        // Thêm điều kiện: anchorTransform.gameObject.activeInHierarchy
+        // Nghĩa là: "Chỉ giữ tia sét khi cục Neo vẫn ĐANG HIỂN THỊ trên màn hình"
+        while (isShieldActive && beam != null && anchorTransform != null && anchorTransform.gameObject.activeInHierarchy)
         {
             beam.transform.LookAt(bossCenter);
             beam.transform.position = anchorTransform.position;
             yield return null;
         }
 
-        if (beam != null) Destroy(beam);
+        // Khi cục Neo bị bắn ẩn đi (SetActive = false), vòng lặp trên sẽ văng ra và chạy xuống đây: Hủy tia sét!
+        if (beam != null)
+        {
+            activeBeams.Remove(beam); // Dọn dẹp danh sách cho sạch sẽ
+            Destroy(beam);
+        }
     }
 
     public void OnAnchorDestroyed()
@@ -158,7 +158,8 @@ public class BossShieldSkill : MonoBehaviour
     {
         if (shieldCollider) shieldCollider.enabled = false;
 
-        foreach (var beam in activeBeams)
+        // Đổi var thành GameObject
+        foreach (GameObject beam in activeBeams)
         {
             if (beam != null) Destroy(beam);
         }

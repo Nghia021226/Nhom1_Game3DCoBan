@@ -1,33 +1,68 @@
 ﻿using UnityEngine;
 
-public class ShieldAnchor : MonoBehaviour
+// Kế thừa IDamageable để viên đạn (bulletProjectTile) có thể gọi hàm TakeDamage
+public class ShieldAnchor : MonoBehaviour, IDamageable
 {
-    private BossShieldSkill bossShieldManager;
+    [Header("--- Cài đặt Máu (Neo) ---")]
+    public float maxHealth = 100f;
+    [SerializeField] private float currentHealth;
 
     [Header("--- Âm thanh khi bị phá ---")]
-    public AudioSource anchorAudioSource; // Gắn AudioSource của chính cái trụ (nếu có) hoặc tạo cái mới
-    public AudioClip breakSound;          // Kéo tiếng kim loại vỡ/nổ vào đây
+    public AudioSource anchorAudioSource;
+    public AudioClip breakSound;
 
+    [Header("--- Hiệu ứng Nổ (Tùy chọn) ---")]
+    public GameObject explosionVFX; // Kéo prefab nổ vào đây nếu có, không có thì bỏ trống
+
+    private BossShieldSkill bossShieldManager;
+    private bool isDestroyed = false; // Cờ chặn lỗi đạn găm nhiều viên cùng lúc
+
+    // Hàm này được Boss gọi mỗi khi Boss thi triển lại skill Khiên
     public void Setup(BossShieldSkill manager)
     {
         bossShieldManager = manager;
+
+        // QUAN TRỌNG: Hồi đầy máu và reset lại trạng thái mỗi lần Neo được bật lên
+        currentHealth = maxHealth;
+        isDestroyed = false;
     }
 
-    public void TakeDamage()
+    // Giao tiếp với đạn của Player thông qua IDamageable
+    public void TakeDamage(float damage)
     {
-        // 1. Phát âm thanh bị phá vỡ (Quan trọng: Dùng PlayClipAtPoint)
-        // Tại sao dùng PlayClipAtPoint? 
-        // Vì dòng dưới bạn dùng SetActive(false), object này sẽ bị tắt ngay lập tức -> AudioSource trên nó cũng tắt theo -> Không nghe được tiếng nổ.
-        // PlayClipAtPoint tạo ra một object tạm thời để phát xong âm thanh rồi tự hủy, dù cái trụ đã tắt.
+        // Nếu Neo đã nổ rồi thì không nhận sát thương nữa
+        if (isDestroyed) return;
+
+        currentHealth -= damage;
+        Debug.Log($"[ShieldAnchor] Neo bị bắn! Máu còn: {currentHealth}/{maxHealth}");
+
+        // Khi máu <= 0 thì phát nổ
+        if (currentHealth <= 0)
+        {
+            Explode();
+        }
+    }
+
+    private void Explode()
+    {
+        isDestroyed = true;
+
+        // 1. Phát âm thanh nổ
         if (breakSound != null)
         {
             AudioSource.PlayClipAtPoint(breakSound, transform.position);
         }
 
-        // 2. Tắt hiển thị của cục này
+        // 2. Tạo hiệu ứng hạt (nếu có)
+        if (explosionVFX != null)
+        {
+            Instantiate(explosionVFX, transform.position, Quaternion.identity);
+        }
+
+        // 3. Ẩn cục Neo đi để tái sử dụng sau (KHÔNG Destroy)
         gameObject.SetActive(false);
 
-        // 3. Báo cho Boss biết
+        // 4. Báo cho Boss biết Neo này đã sập
         if (bossShieldManager != null)
         {
             bossShieldManager.OnAnchorDestroyed();

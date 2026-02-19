@@ -5162,8 +5162,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d411aa713dae3647b997f606f93fcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anchorAudioSource: {fileID: 0}
+  maxHealth: 1
+  currentHealth: 0
+  anchorAudioSource: {fileID: 235944907}
   breakSound: {fileID: 0}
+  explosionVFX: {fileID: 0}
 --- !u!135 &145148390
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5179,7 +5182,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -25621,8 +25624,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d411aa713dae3647b997f606f93fcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anchorAudioSource: {fileID: 0}
+  maxHealth: 1
+  currentHealth: 0
+  anchorAudioSource: {fileID: 235944907}
   breakSound: {fileID: 0}
+  explosionVFX: {fileID: 0}
 --- !u!135 &954709741
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -25638,7 +25644,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -41278,8 +41284,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d411aa713dae3647b997f606f93fcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anchorAudioSource: {fileID: 0}
+  maxHealth: 1
+  currentHealth: 0
+  anchorAudioSource: {fileID: 235944907}
   breakSound: {fileID: 0}
+  explosionVFX: {fileID: 0}
 --- !u!135 &1543542629
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -41295,7 +41304,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -43129,8 +43138,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d411aa713dae3647b997f606f93fcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anchorAudioSource: {fileID: 0}
+  maxHealth: 1
+  currentHealth: 0
+  anchorAudioSource: {fileID: 235944907}
   breakSound: {fileID: 0}
+  explosionVFX: {fileID: 0}
 --- !u!135 &1629025158
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -43146,7 +43158,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -45815,8 +45827,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d411aa713dae3647b997f606f93fcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anchorAudioSource: {fileID: 0}
+  maxHealth: 1
+  currentHealth: 0
+  anchorAudioSource: {fileID: 235944907}
   breakSound: {fileID: 0}
+  explosionVFX: {fileID: 0}
 --- !u!135 &1764010213
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -45832,7 +45847,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -47933,8 +47948,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d411aa713dae3647b997f606f93fcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anchorAudioSource: {fileID: 0}
+  maxHealth: 1
+  currentHealth: 0
+  anchorAudioSource: {fileID: 235944907}
   breakSound: {fileID: 0}
+  explosionVFX: {fileID: 0}
 --- !u!135 &1857237081
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -47950,7 +47968,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -48937,8 +48955,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d411aa713dae3647b997f606f93fcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anchorAudioSource: {fileID: 0}
+  maxHealth: 1
+  currentHealth: 0
+  anchorAudioSource: {fileID: 235944907}
   breakSound: {fileID: 0}
+  explosionVFX: {fileID: 0}
 --- !u!135 &1879190070
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -48954,7 +48975,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -54777,6 +54798,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1871007972}
     m_Modifications:
+    - target: {fileID: 4156269061055061061, guid: 19bc2ed9d8815cf4abf9fe7212b58fc8, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4344311401141532624, guid: 19bc2ed9d8815cf4abf9fe7212b58fc8, type: 3}
+      propertyPath: maxHealth
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4344311401141532624, guid: 19bc2ed9d8815cf4abf9fe7212b58fc8, type: 3}
       propertyPath: anchorAudioSource
       value: 
