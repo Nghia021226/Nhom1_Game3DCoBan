@@ -33,7 +33,7 @@ public class CheckPlayer : MonoBehaviour
     [Header("--- Cài đặt Boss & Player ---")]
     public MonoBehaviour bossSkillScript;
     public MonoBehaviour playerMovement;
-
+    public BossHealth bossHealthScript; // <-- THÊM DÒNG NÀY
     private bool hasPlayed = false;
     private bool isSkipping = false; // Biến kiểm tra xem có đang skip không
 
@@ -139,18 +139,37 @@ public class CheckPlayer : MonoBehaviour
 
     IEnumerator EnableGameplayDelayed()
     {
-        // Delay nhỏ để camera kịp quay về (nếu muốn mượt hơn)
+        Debug.Log("[CheckPlayer] Bắt đầu kích hoạt lại gameplay sau cutscene...");
         yield return new WaitForSeconds(1.0f);
 
-        if (playerMovement != null) playerMovement.enabled = true;
+        if (playerMovement != null)
+        {
+            playerMovement.enabled = true;
+            Debug.Log("[CheckPlayer] Đã mở khóa di chuyển cho Player.");
+        }
 
         if (bossSkillScript != null)
         {
             bossSkillScript.enabled = true;
-            // Giữ lại logic gọi hàm StartFighting của bạn
-            var bossScript = bossSkillScript.GetComponent("BossLaserSkill") as MonoBehaviour;
-            // Lưu ý: Mình dùng SendMessage hoặc GetComponent theo cách an toàn để tránh lỗi nếu bạn đổi tên script
             bossSkillScript.SendMessage("StartFighting", SendMessageOptions.DontRequireReceiver);
+            Debug.Log("[CheckPlayer] Đã gửi lệnh StartFighting cho skill của Boss.");
+        }
+
+        // --- KIỂM TRA VÀ BẬT THANH MÁU ---
+        Debug.Log("[CheckPlayer] Chuẩn bị kích hoạt UI máu Boss...");
+
+        if (bossHealthScript != null)
+        {
+            Debug.Log("[CheckPlayer] Đã tìm thấy bossHealthScript! Tiến hành bật GameObject...");
+            bossHealthScript.gameObject.SetActive(true);
+
+            Debug.Log("[CheckPlayer] Đã bật GameObject BossHealth. Bắt đầu gọi hàm StartFighting() của máu...");
+            bossHealthScript.StartFighting();
+        }
+        else
+        {
+            // Dùng LogError để chữ hiện màu đỏ chót cho dễ thấy
+            Debug.LogError("🚨 [CheckPlayer] LỖI CỰC MẠNH: bossHealthScript đang bị NULL! Bạn chưa kéo object BossHealth vào ô trống trong Inspector của CheckPlayer rồi!");
         }
     }
 }
