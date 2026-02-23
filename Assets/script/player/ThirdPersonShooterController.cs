@@ -104,6 +104,12 @@ public class ThirdPersonShooterController : MonoBehaviour
             debugTransform.position = raycastHit.point;
             mouseWorldPosition = raycastHit.point;
         }
+        else
+        {
+            // Nếu nhắm lên trời (không chạm collider), bắn tia thẳng ra xa vô tận
+            mouseWorldPosition = ray.GetPoint(999f);
+            debugTransform.position = mouseWorldPosition;
+        }
 
         if (isCurrentlyAiming)
         {
