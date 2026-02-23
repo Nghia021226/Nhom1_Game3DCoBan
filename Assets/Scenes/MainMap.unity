@@ -50906,9 +50906,9 @@ MonoBehaviour:
   gunUIGroup: {fileID: 182929874}
   ammoText: {fileID: 182929873}
   reloadProgressCircle: {fileID: 182929872}
-  currentAmmo: 5
+  currentAmmo: 15
   maxAmmo: 20
-  reserveAmmo: 7
+  reserveAmmo: 20
   reloadTime: 2
   fireRate: 2
 --- !u!114 &1968945593
@@ -55708,11 +55708,11 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: d6e739522dbbfe044a8be17f8a286b2f, type: 3}
     - target: {fileID: 4507087409110950126, guid: ce735fb5880b7b64287dbdd672ab31d5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4507087409110950126, guid: ce735fb5880b7b64287dbdd672ab31d5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.9
+      value: 1.203
       objectReference: {fileID: 0}
     - target: {fileID: 8731801600933439272, guid: ce735fb5880b7b64287dbdd672ab31d5, type: 3}
       propertyPath: m_Name
