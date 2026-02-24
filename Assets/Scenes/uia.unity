@@ -9216,9 +9216,9 @@ MonoBehaviour:
   gunUIGroup: {fileID: 1177481654}
   ammoText: {fileID: 1177481653}
   reloadProgressCircle: {fileID: 1177481652}
-  currentAmmo: 5
+  currentAmmo: 12
   maxAmmo: 20
-  reserveAmmo: 7
+  reserveAmmo: 100
   reloadTime: 2
   fireRate: 2
 --- !u!114 &323282267
@@ -40918,7 +40918,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -47299,7 +47299,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.9137255}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -56140,6 +56140,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 365602310}
   - {fileID: 1433104819}
+  - {fileID: 1943100687}
   - {fileID: 1907769119}
   - {fileID: 431952443}
   - {fileID: 1621992742}
@@ -56164,7 +56165,6 @@ SceneRoots:
   - {fileID: 627415092}
   - {fileID: 235944908}
   - {fileID: 1441765591}
-  - {fileID: 1943100687}
   - {fileID: 674105015}
   - {fileID: 10716932}
   - {fileID: 2012948053}
