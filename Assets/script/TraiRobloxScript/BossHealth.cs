@@ -18,9 +18,12 @@ public class BossHealth : MonoBehaviour, IDamageable
     [Header("--- Cảnh báo (Warning) ---")]
     public GameObject warningOverlay;
     [Tooltip("Tốc độ mờ/đậm của viền cảnh báo. Số càng to nháy càng nhanh.")]
-    public float warningFadeSpeed = 2f; // <--- BIẾN MỚI: CHỈNH TỐC ĐỘ NHÁY Ở ĐÂY
+    public float warningFadeSpeed = 2f;
     public AudioSource audioSource;
     public AudioClip warningSound;
+
+    [Tooltip("THÊM MỚI: Thời gian phát âm thanh cảnh báo (giây) và hiệu ứng nháy đỏ.")]
+    public float warningSoundDuration = 2.5f;
 
     [Header("--- Kết nối Skill Boss ---")]
     public BossLaserSkill bossSkill;
@@ -47,12 +50,8 @@ public class BossHealth : MonoBehaviour, IDamageable
     {
         if (bossUIPanel != null) bossUIPanel.SetActive(true);
 
-        if (audioSource != null && warningSound != null)
-        {
-            audioSource.PlayOneShot(warningSound);
-        }
-
-        StartCoroutine(FadeWarningRoutine()); // Gọi hàm Fade mới thay cho Blink
+        StartCoroutine(PlayAndStopWarningSound());
+        StartCoroutine(FadeWarningRoutine());
 
         float timer = 0f;
         while (timer < fillDuration)
@@ -68,31 +67,38 @@ public class BossHealth : MonoBehaviour, IDamageable
         isInvulnerable = false;
     }
 
-    // --- HÀM MỚI: LÀM MỜ VÀ ĐẬM DẦN ---
+    IEnumerator PlayAndStopWarningSound()
+    {
+        if (audioSource != null && warningSound != null)
+        {
+            audioSource.clip = warningSound;
+            audioSource.Play();
+            yield return new WaitForSeconds(warningSoundDuration);
+            audioSource.Stop();
+        }
+    }
+
     IEnumerator FadeWarningRoutine()
     {
         if (warningOverlay == null) yield break;
 
         warningOverlay.SetActive(true);
 
-        // Tự động lấy CanvasGroup (hoặc thêm vào nếu chưa có) để làm mờ cả cụm UI một cách mượt nhất
         CanvasGroup canvasGroup = warningOverlay.GetComponent<CanvasGroup>();
         if (canvasGroup == null)
         {
             canvasGroup = warningOverlay.AddComponent<CanvasGroup>();
         }
 
-        float endTime = Time.time + fillDuration;
+        // ĐÃ SỬA: Dùng warningSoundDuration để quyết định thời gian nháy UI thay cho fillDuration
+        float endTime = Time.time + warningSoundDuration;
 
         while (Time.time < endTime)
         {
-            // Mathf.PingPong sẽ làm giá trị Alpha chạy trơn tru từ 0 đến 1 rồi vòng ngược lại từ 1 về 0
             canvasGroup.alpha = Mathf.PingPong(Time.time * warningFadeSpeed, 1f);
-
-            yield return null; // Chạy mỗi frame để hiệu ứng siêu mượt
+            yield return null;
         }
 
-        // Chạy xong intro thì tắt đi và reset độ mờ lại như cũ để đề phòng
         warningOverlay.SetActive(false);
         canvasGroup.alpha = 1f;
     }
@@ -127,6 +133,12 @@ public class BossHealth : MonoBehaviour, IDamageable
 
         if (bossSkill != null) bossSkill.StopAllCoroutines();
         if (shieldSkill != null) shieldSkill.StopAllCoroutines();
+
+        CheckPlayer checkPlayerScript = FindObjectOfType<CheckPlayer>();
+        if (checkPlayerScript != null)
+        {
+            checkPlayerScript.StopBossMusic();
+        }
 
         if (GameManager.instance != null)
         {

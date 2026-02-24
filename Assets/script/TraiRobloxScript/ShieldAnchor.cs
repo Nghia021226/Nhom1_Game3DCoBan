@@ -9,7 +9,8 @@ public class ShieldAnchor : MonoBehaviour, IDamageable
 
     [Header("--- Âm thanh khi bị phá ---")]
     public AudioSource anchorAudioSource;
-    public AudioClip breakSound;
+    // Thay đổi: Dùng mảng AudioClip để chứa nhiều âm thanh khác nhau
+    public AudioClip[] breakSounds;
 
     [Header("--- Hiệu ứng Nổ (Tùy chọn) ---")]
     public GameObject explosionVFX; // Kéo prefab nổ vào đây nếu có, không có thì bỏ trống
@@ -34,7 +35,8 @@ public class ShieldAnchor : MonoBehaviour, IDamageable
         if (isDestroyed) return;
 
         currentHealth -= damage;
-        Debug.Log($"[ShieldAnchor] Neo bị bắn! Máu còn: {currentHealth}/{maxHealth}");
+        // Tạm thời comment dòng log máu này lại cho đỡ rối Console nhé
+        // Debug.Log($"[ShieldAnchor] Neo bị bắn! Máu còn: {currentHealth}/{maxHealth}");
 
         // Khi máu <= 0 thì phát nổ
         if (currentHealth <= 0)
@@ -46,11 +48,31 @@ public class ShieldAnchor : MonoBehaviour, IDamageable
     private void Explode()
     {
         isDestroyed = true;
+        Debug.Log("==== [ShieldAnchor] BẮT ĐẦU NỔ NE0 ====");
 
-        // 1. Phát âm thanh nổ
-        if (breakSound != null)
+        // 1. Phát âm thanh nổ ngẫu nhiên
+        if (breakSounds != null && breakSounds.Length > 0)
         {
-            AudioSource.PlayClipAtPoint(breakSound, transform.position);
+            Debug.Log($"[ShieldAnchor] Mảng âm thanh có {breakSounds.Length} file. Đang random...");
+
+            // Chọn ngẫu nhiên một con số từ 0 đến (số lượng âm thanh - 1)
+            int randomIndex = Random.Range(0, breakSounds.Length);
+            AudioClip soundToPlay = breakSounds[randomIndex];
+
+            if (soundToPlay != null)
+            {
+                Debug.Log($"[ShieldAnchor] THÀNH CÔNG: Đã chọn âm thanh vị trí [{randomIndex}] mang tên '{soundToPlay.name}'. Chuẩn bị phát!");
+                // Đặt mức âm lượng là 1f (100%) và phát ngay tại Camera
+                AudioSource.PlayClipAtPoint(soundToPlay, Camera.main.transform.position, 1f);
+            }
+            else
+            {
+                Debug.LogWarning($"[ShieldAnchor] LỖI: Vị trí [{randomIndex}] trong mảng bị trống (None). Bạn chưa kéo file âm thanh vào ô này!");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[ShieldAnchor] LỖI: Mảng breakSounds đang trống (Size = 0) hoặc chưa được khởi tạo. Hãy kiểm tra lại Inspector!");
         }
 
         // 2. Tạo hiệu ứng hạt (nếu có)
@@ -67,5 +89,7 @@ public class ShieldAnchor : MonoBehaviour, IDamageable
         {
             bossShieldManager.OnAnchorDestroyed();
         }
+
+        Debug.Log("==== [ShieldAnchor] KẾT THÚC NỔ NE0 ====");
     }
 }

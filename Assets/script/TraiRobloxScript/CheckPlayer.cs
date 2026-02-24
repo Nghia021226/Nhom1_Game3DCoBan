@@ -25,7 +25,10 @@ public class CheckPlayer : MonoBehaviour
     public GameObject skipButton; // Kéo nút Skip vào đây
 
     [Header("--- Cài đặt Âm thanh ---")]
-    public AudioSource audioSource; // Kéo AudioSource vào để phát tiếng
+    public AudioSource audioSource; // Dành cho lồng tiếng (Voice)
+
+    // THÊM MỚI: Biến chứa AudioSource dành riêng cho Nhạc Nền Boss
+    public AudioSource bgmAudioSource;
 
     [Header("--- Cài đặt Tốc độ Chữ ---")]
     public float typingSpeed = 0.04f;
@@ -33,9 +36,9 @@ public class CheckPlayer : MonoBehaviour
     [Header("--- Cài đặt Boss & Player ---")]
     public MonoBehaviour bossSkillScript;
     public MonoBehaviour playerMovement;
-    public BossHealth bossHealthScript; // <-- THÊM DÒNG NÀY
+    public BossHealth bossHealthScript;
     private bool hasPlayed = false;
-    private bool isSkipping = false; // Biến kiểm tra xem có đang skip không
+    private bool isSkipping = false;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -45,12 +48,11 @@ public class CheckPlayer : MonoBehaviour
         }
     }
 
-    // Hàm này gán vào nút Button Skip trên màn hình (OnClick)
     public void SkipCutscene()
     {
         if (hasPlayed && !isSkipping)
         {
-            isSkipping = true; // Bật cờ skip để thoát vòng lặp
+            isSkipping = true;
         }
     }
 
@@ -59,81 +61,60 @@ public class CheckPlayer : MonoBehaviour
         hasPlayed = true;
         isSkipping = false;
 
-        // --- CODE MỚI THÊM VÀO ĐÂY ---
-        // Mở khóa chuột để người chơi có thể bấm nút Skip hoặc click màn hình
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // Khóa Player và Boss
         if (playerMovement != null) playerMovement.enabled = false;
         if (bossSkillScript != null) bossSkillScript.enabled = false;
 
-        // Chuyển Camera
         if (bossVirtualCamera != null) bossVirtualCamera.Priority = 20;
 
-        // Bật nút Skip (nếu có)
         if (skipButton != null) skipButton.SetActive(true);
 
-        yield return new WaitForSeconds(1.5f); // Chờ camera bay
+        yield return new WaitForSeconds(1.5f);
 
         if (dialoguePanel != null) dialoguePanel.SetActive(true);
 
-        // --- BẮT ĐẦU VÒNG LẶP THOẠI MỚI ---
         foreach (var data in dialogueContent)
         {
-            // Nếu bấm Skip thì thoát vòng lặp ngay lập tức
             if (isSkipping) break;
 
             dialogueText.text = "";
 
-            // A. PHÁT LỒNG TIẾNG
             if (audioSource != null && data.voiceClip != null)
             {
-                audioSource.Stop(); // Dừng câu cũ
-                audioSource.PlayOneShot(data.voiceClip); // Phát câu mới
+                audioSource.Stop();
+                audioSource.PlayOneShot(data.voiceClip);
             }
 
-            // B. HIỆU ỨNG CHỮ CHẠY
             foreach (char letter in data.lineText.ToCharArray())
             {
-                // Nếu bấm Skip trong lúc chữ đang chạy -> thoát luôn
                 if (isSkipping) break;
 
                 dialogueText.text += letter;
                 yield return new WaitForSeconds(typingSpeed);
             }
 
-            // Nếu bấm Skip -> thoát luôn
             if (isSkipping) break;
 
-            // C. CHỜ NGƯỜI CHƠI CLICK CHUỘT TRÁI (Thay cho WaitForSeconds cũ)
-            // Code sẽ kẹt ở dòng dưới mãi cho đến khi Click chuột HOẶC bấm Skip
             yield return new WaitUntil(() => Input.GetMouseButtonDown(0) || isSkipping);
         }
 
-        // --- KẾT THÚC CUTSCENE ---
         EndCutscene();
     }
 
     void EndCutscene()
     {
-        // Tắt hết UI
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (skipButton != null) skipButton.SetActive(false);
 
-        // --- CODE MỚI THÊM VÀO ĐÂY ---
-        // Khóa chuột lại để quay về mode chơi game bắn súng
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        // -----------------------------
 
-        // Tắt âm thanh nếu đang nói dở
         if (audioSource != null) audioSource.Stop();
 
-        // Trả Camera về
         if (bossVirtualCamera != null) bossVirtualCamera.Priority = 0;
 
-        // Mở khóa Player và kích hoạt Boss (Logic cũ của bạn)
         StartCoroutine(EnableGameplayDelayed());
     }
 
@@ -145,31 +126,39 @@ public class CheckPlayer : MonoBehaviour
         if (playerMovement != null)
         {
             playerMovement.enabled = true;
-            Debug.Log("[CheckPlayer] Đã mở khóa di chuyển cho Player.");
         }
 
         if (bossSkillScript != null)
         {
             bossSkillScript.enabled = true;
             bossSkillScript.SendMessage("StartFighting", SendMessageOptions.DontRequireReceiver);
-            Debug.Log("[CheckPlayer] Đã gửi lệnh StartFighting cho skill của Boss.");
         }
 
-        // --- KIỂM TRA VÀ BẬT THANH MÁU ---
-        Debug.Log("[CheckPlayer] Chuẩn bị kích hoạt UI máu Boss...");
+        // THÊM MỚI: Bật nhạc nền Boss khi trận chiến bắt đầu
+        if (bgmAudioSource != null)
+        {
+            bgmAudioSource.Play();
+            Debug.Log("[CheckPlayer] ĐÃ BẬT NHẠC NỀN BOSS!");
+        }
 
         if (bossHealthScript != null)
         {
-            Debug.Log("[CheckPlayer] Đã tìm thấy bossHealthScript! Tiến hành bật GameObject...");
             bossHealthScript.gameObject.SetActive(true);
-
-            Debug.Log("[CheckPlayer] Đã bật GameObject BossHealth. Bắt đầu gọi hàm StartFighting() của máu...");
             bossHealthScript.StartFighting();
         }
         else
         {
-            // Dùng LogError để chữ hiện màu đỏ chót cho dễ thấy
-            Debug.LogError("🚨 [CheckPlayer] LỖI CỰC MẠNH: bossHealthScript đang bị NULL! Bạn chưa kéo object BossHealth vào ô trống trong Inspector của CheckPlayer rồi!");
+            Debug.LogError("🚨 [CheckPlayer] LỖI CỰC MẠNH: bossHealthScript đang bị NULL!");
+        }
+    }
+
+    // THÊM MỚI: Hàm này được gọi từ script BossHealth khi Boss chết
+    public void StopBossMusic()
+    {
+        if (bgmAudioSource != null && bgmAudioSource.isPlaying)
+        {
+            bgmAudioSource.Stop();
+            Debug.Log("[CheckPlayer] ĐÃ TẮT NHẠC NỀN DO BOSS CHẾT!");
         }
     }
 }
