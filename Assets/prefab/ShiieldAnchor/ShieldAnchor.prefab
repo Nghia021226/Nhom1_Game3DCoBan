@@ -234,7 +234,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -252,8 +252,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d411aa713dae3647b997f606f93fcdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 1
+  currentHealth: 0
   anchorAudioSource: {fileID: 0}
-  breakSound: {fileID: 0}
+  breakSounds:
+  - {fileID: 8300000, guid: 4996fe1cf35250d4b8642eb77b69e70c, type: 3}
+  - {fileID: 8300000, guid: 1ddef23025744ef41934682e617117ec, type: 3}
+  explosionVFX: {fileID: 0}
 --- !u!1001 &7441595776686319713
 PrefabInstance:
   m_ObjectHideFlags: 0
