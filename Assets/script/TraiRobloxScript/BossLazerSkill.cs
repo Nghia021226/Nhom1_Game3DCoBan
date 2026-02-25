@@ -60,15 +60,15 @@ public class BossLaserSkill : MonoBehaviour
                 Debug.Log("[Boss] Skill: MƯA LAZE!");
                 yield return StartCoroutine(DoLaserSkill());
             }
-            else
-            {
-                Debug.Log("[Boss] Skill: TẠO GIÁP!");
-                if (shieldSkillScript != null)
-                {
-                    shieldSkillScript.ActivateShieldSkill();
-                    yield return new WaitUntil(() => shieldSkillScript.IsSkillFinished());
-                }
-            }
+            //else
+            //{
+            //    Debug.Log("[Boss] Skill: TẠO GIÁP!");
+            //    if (shieldSkillScript != null)
+            //    {
+            //        shieldSkillScript.ActivateShieldSkill();
+            //        yield return new WaitUntil(() => shieldSkillScript.IsSkillFinished());
+            //    }
+            //}
 
             Debug.Log($"[Boss] Nghỉ mệt {timeBetweenSkills}s...");
             yield return new WaitForSeconds(timeBetweenSkills);
