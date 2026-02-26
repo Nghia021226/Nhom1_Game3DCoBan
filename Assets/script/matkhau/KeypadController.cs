@@ -23,6 +23,9 @@ public class KeypadController : MonoBehaviour
     private bool isLocked = false;
     private bool isSolved = false;
 
+    // BIẾN MỚI ĐỂ FIX LỖI CHỚP CAMERA
+    private float activateTime = 0f;
+
     void Start()
     {
         if (keypadCamera != null) keypadCamera.Priority = 0;
@@ -36,9 +39,14 @@ public class KeypadController : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.instance.isUsingKeypad)
+        // Kiểm tra xem keypad có đang bật và đã qua 0.2s từ lúc mở chưa
+        if (GameManager.instance.isUsingKeypad && Time.time > activateTime + 0.2f)
         {
-            if (Input.GetKeyDown(KeyCode.F)) ExitKeypad();
+            // Bấm F hoặc ESC đều thoát được
+            if (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Escape))
+            {
+                ExitKeypad();
+            }
         }
     }
 
@@ -46,6 +54,9 @@ public class KeypadController : MonoBehaviour
     {
         if (keypadCamera != null) keypadCamera.Priority = 20;
         GameManager.instance.ToggleKeypadMode(true);
+
+        // LƯU LẠI THỜI ĐIỂM MỞ KEYPAD 
+        activateTime = Time.time;
 
         if (isSolved)
         {
