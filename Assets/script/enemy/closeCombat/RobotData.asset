@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: RobotData
   m_EditorClassIdentifier: 
   enemyName: ' securityRobot'
-  maxHealth: 500
+  maxHealth: 250
   moveSpeed: 3.5
   damage: 20
