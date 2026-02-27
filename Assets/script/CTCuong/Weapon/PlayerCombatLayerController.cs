@@ -32,7 +32,6 @@ public class PlayerCombatLayerController : MonoBehaviour
 
     void Update()
     {
-        // Nhấn Tab để rút/cất súng
         if (hasWeapon && Input.GetKeyDown(toggleKey))
         {
             isArmed = !isArmed;
@@ -40,7 +39,6 @@ public class PlayerCombatLayerController : MonoBehaviour
         }
     }
 
-    // Trong file PlayerCombatLayerController.cs
     public bool GetIsArmed()
     {
         return isArmed;

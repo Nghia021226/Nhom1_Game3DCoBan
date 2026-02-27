@@ -20,12 +20,11 @@ public class bulletProjectTile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Kiểm tra xem thứ vừa chạm có nhận dame được không
         IDamageable victim = other.GetComponent<IDamageable>();
 
         if (victim != null)
         {
-            victim.TakeDamage(25f); // Gây 25 sát thương
+            victim.TakeDamage(25f); 
             if (vfxHitGreen != null) Instantiate(vfxHitGreen, transform.position, Quaternion.identity);
         }
         else

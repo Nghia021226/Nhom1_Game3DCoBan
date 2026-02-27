@@ -6,9 +6,8 @@ public class EnemyPatrolData : MonoBehaviour
     [Header("Kéo thả các điểm Waypoint vào đây")]
     public List<Transform> patrolPoints; 
 
-    private int _lastIndex = -1; // Biến lưu lại điểm vừa đi qua
+    private int _lastIndex = -1; 
 
-    
     public Vector3 GetRandomWaypoint()
     {
         if (patrolPoints.Count == 0) return transform.position;
@@ -24,7 +23,6 @@ public class EnemyPatrolData : MonoBehaviour
             newIndex = Random.Range(0, patrolPoints.Count);
         }
 
-        // Lưu lại điểm mới này để lần sau so sánh
         _lastIndex = newIndex;
 
         return patrolPoints[newIndex].position;
@@ -32,21 +30,16 @@ public class EnemyPatrolData : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        // 1. Kiểm tra nếu danh sách rỗng thì không vẽ gì cả
         if (patrolPoints == null || patrolPoints.Count == 0) return;
 
-        // 2. Chọn màu cho Gizmos (ví dụ màu Xanh Cyan)
         Gizmos.color = Color.cyan;
 
         for (int i = 0; i < patrolPoints.Count; i++)
         {
             if (patrolPoints[i] != null)
             {
-                // Vẽ một quả cầu nhỏ tại vị trí waypoint
                 Gizmos.DrawSphere(patrolPoints[i].position, 0.5f);
-
-                // (Tùy chọn) Vẽ đường nối giữa các điểm để dễ nhìn thứ tự
-                // Nối điểm hiện tại với điểm kế tiếp
+                
                 Transform nextPoint = patrolPoints[(i + 1) % patrolPoints.Count];
                 if (nextPoint != null)
                 {
