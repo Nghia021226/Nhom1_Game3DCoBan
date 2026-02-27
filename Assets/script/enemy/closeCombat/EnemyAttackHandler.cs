@@ -30,7 +30,7 @@ namespace Script.Enemy
         private Transform player;
         private Animator enemyAnimator;
         private bool _hasKilledPlayer;
-        private bool _hasCheckedThisAttack; // Chỉ giữ lại biến này là đủ
+        private bool _hasCheckedThisAttack; 
 
         void Start()
         {
@@ -58,14 +58,12 @@ namespace Script.Enemy
 
             AnimatorStateInfo stateInfo = enemyAnimator.GetCurrentAnimatorStateInfo(0);
 
-            // Kiểm tra State bằng tên
             bool isInAttackState = stateInfo.IsName(attackStateName);
 
             if (isInAttackState)
             {
                 float currentTime = stateInfo.normalizedTime % 1f;
 
-                // --- TRACKING (XOAY) ---
                 float trackingLimit = damageStartTime - stopTrackingTime;
                 if (trackingLimit < 0) trackingLimit = damageStartTime;
 
@@ -74,14 +72,12 @@ namespace Script.Enemy
                     RotateTowardsPlayer();
                 }
 
-                // --- GÂY DAMAGE ---
                 if (!_hasCheckedThisAttack && currentTime >= damageStartTime && currentTime <= damageEndTime)
                 {
                     _hasCheckedThisAttack = true;
                     CheckAttackHit();
                 }
 
-                // Reset an toàn khi hết animation
                 if (currentTime > 0.95f)
                 {
                     _hasCheckedThisAttack = false;
@@ -89,7 +85,6 @@ namespace Script.Enemy
             }
             else
             {
-                // Reset ngay lập tức khi thoát khỏi trạng thái đánh
                 _hasCheckedThisAttack = false;
             }
         }

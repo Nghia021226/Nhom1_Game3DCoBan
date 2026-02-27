@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic; // Thêm thư viện này để dùng HashSet
+using System.Collections.Generic;
 
 public class MusicManager : MonoBehaviour
 {
@@ -11,7 +11,6 @@ public class MusicManager : MonoBehaviour
     [SerializeField] AudioClip normalMusic;
     [SerializeField] AudioClip chaseMusic;
 
-    // Thay đổi từ int sang HashSet để quản lý chính xác từng GameObject
     private HashSet<GameObject> chasingEnemies = new HashSet<GameObject>();
 
     void Awake()
@@ -25,10 +24,9 @@ public class MusicManager : MonoBehaviour
         SwitchMusic(normalMusic);
     }
 
-    // Nhận thêm tham số GameObject để biết chính xác quái nào đang đuổi
     public void StartChase(GameObject enemy)
     {
-        if (chasingEnemies.Add(enemy)) // Chỉ thực hiện nếu quái này chưa có trong danh sách
+        if (chasingEnemies.Add(enemy)) 
         {
             if (chasingEnemies.Count == 1)
             {
@@ -37,10 +35,9 @@ public class MusicManager : MonoBehaviour
         }
     }
 
-    // Xóa quái khỏi danh sách khi nó ngừng đuổi hoặc chết
     public void StopChase(GameObject enemy)
     {
-        if (chasingEnemies.Remove(enemy)) // Chỉ thực hiện nếu quái này có trong danh sách
+        if (chasingEnemies.Remove(enemy)) 
         {
             if (chasingEnemies.Count == 0)
             {

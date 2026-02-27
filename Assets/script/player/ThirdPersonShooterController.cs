@@ -32,10 +32,10 @@ public class ThirdPersonShooterController : MonoBehaviour
     [SerializeField] private Rig rig2;
 
     [Header("UI Settings")]
-    [SerializeField] private GameObject crosshairUI; // Tâm ngắm - Chỉ hiện khi nhắm chuột phải
-    [SerializeField] private GameObject gunUIGroup;  // Nhóm UI đạn - Hiện khi đã nhấn Tab (Armed)
+    [SerializeField] private GameObject crosshairUI; 
+    [SerializeField] private GameObject gunUIGroup;  
     [SerializeField] private TextMeshProUGUI ammoText;
-    [SerializeField] private Image reloadProgressCircle; // Vòng tròn reload - Chỉ hiện khi đang chạy Coroutine nạp đạn
+    [SerializeField] private Image reloadProgressCircle;  
 
     [Header("Ammo Settings")]
     [SerializeField] private int currentAmmo = 20;
@@ -62,37 +62,29 @@ public class ThirdPersonShooterController : MonoBehaviour
         animator = GetComponent<Animator>();
         combatController = GetComponent<PlayerCombatLayerController>();
 
-        // Đảm bảo vòng nạp đạn ẩn lúc bắt đầu game
         if (reloadProgressCircle != null) reloadProgressCircle.gameObject.SetActive(false);
     }
 
     private void Update()
     {
-        // 1. Kiểm tra trạng thái súng (Armed = Đang cầm trên tay sau khi bấm Tab)
         bool hasWeaponArmed = combatController != null && combatController.GetIsArmed();
 
-        // HIỆN UI đạn ngay khi cầm súng, ẨN khi không cầm súng
         if (gunUIGroup != null) gunUIGroup.SetActive(hasWeaponArmed);
 
-        // Cập nhật text lượng đạn
         if (ammoText != null)
         {
             ammoText.text = $"<size=120%>{currentAmmo}</size> <size=80%>/ {reserveAmmo}</size>";
-
-            // Đổi sang màu đỏ rực khi còn dưới 5 viên
             ammoText.color = (currentAmmo <= 3) ? Color.red : Color.white;
         } 
 
         if (isReloading) return;
 
-        // 2. Nạp đạn thủ công bằng phím R
         if (Input.GetKeyDown(KeyCode.R) && currentAmmo < maxAmmo && reserveAmmo > 0)
         {
             StartCoroutine(ReloadRoutine());
             return;
         }
 
-        // 3. Logic Nhắm (Aim)
         bool isCurrentlyAiming = starterAssetsInputs.aim && hasWeaponArmed;
 
         Vector3 mouseWorldPosition = Vector3.zero;
@@ -106,7 +98,6 @@ public class ThirdPersonShooterController : MonoBehaviour
         }
         else
         {
-            // Nếu nhắm lên trời (không chạm collider), bắn tia thẳng ra xa vô tận
             mouseWorldPosition = ray.GetPoint(999f);
             debugTransform.position = mouseWorldPosition;
         }
@@ -117,7 +108,6 @@ public class ThirdPersonShooterController : MonoBehaviour
             thirdPersonController.SetSensitivity(aimSensitivity);
             thirdPersonController.SetRotateOnMove(false);
 
-            // CHỈ HIỆN TÂM NGẮM KHI ĐANG NHẮM (Chuột phải)
             if (crosshairUI != null) crosshairUI.SetActive(true);
 
             float lerpSpeed = Time.deltaTime * 13f;
@@ -136,7 +126,6 @@ public class ThirdPersonShooterController : MonoBehaviour
             thirdPersonController.SetSensitivity(normalSensitivity);
             thirdPersonController.SetRotateOnMove(true);
 
-            // ẨN TÂM NGẮM KHI KHÔNG NHẮM
             if (crosshairUI != null) crosshairUI.SetActive(false);
 
             float lerpSpeed = Time.deltaTime * 13f;
@@ -145,7 +134,6 @@ public class ThirdPersonShooterController : MonoBehaviour
             animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 0f, lerpSpeed));
         }
 
-        // 4. Xử lý Bắn (Shoot)
         if (starterAssetsInputs.shoot && isCurrentlyAiming && Time.time >= nextTimeToFire)
         {
             nextTimeToFire = Time.time + 1f / fireRate;
@@ -164,14 +152,12 @@ public class ThirdPersonShooterController : MonoBehaviour
             }
             else
             {
-                // TỰ ĐỘNG NẠP ĐẠN KHI HẾT ĐẠN MÀ VẪN BẤM BẮN
                 if (reserveAmmo > 0)
                 {
                     StartCoroutine(ReloadRoutine());
                 }
                 else
                 {
-                    // Laze xịt nếu hết cả đạn dự trữ
                     if (audioSource != null && dryFireSound != null && !audioSource.isPlaying)
                     {
                         audioSource.PlayOneShot(dryFireSound, volume);
@@ -186,13 +172,11 @@ public class ThirdPersonShooterController : MonoBehaviour
     {
         isReloading = true;
 
-        // PHÁT ÂM THANH NẠP ĐẠN NGAY KHI BẮT ĐẦU
         if (audioSource != null && reloadSound != null)
         {
             audioSource.PlayOneShot(reloadSound, volume);
         }
 
-        // CHỈ HIỆN VÒNG TRÒN RELOAD KHI BẮT ĐẦU NẠP
         if (reloadProgressCircle != null)
         {
             reloadProgressCircle.gameObject.SetActive(true);
@@ -213,7 +197,6 @@ public class ThirdPersonShooterController : MonoBehaviour
         currentAmmo += ammoToTransfer;
         reserveAmmo -= ammoToTransfer;
 
-        // ẨN VÒNG TRÒN RELOAD KHI XONG
         if (reloadProgressCircle != null) reloadProgressCircle.gameObject.SetActive(false);
         isReloading = false;
     }
