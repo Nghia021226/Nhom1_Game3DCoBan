@@ -5,29 +5,29 @@ using System.Collections;
 public class BossHealth : MonoBehaviour, IDamageable
 {
     [Header("--- Chỉ số Boss ---")]
-    public float maxHealth = 1000f;
+    [SerializeField] private float maxHealth = 1000f;
     private float currentHealth;
     private bool isDead = false;
     private bool isInvulnerable = true;
 
     [Header("--- UI Thanh Máu ---")]
-    public GameObject bossUIPanel;
-    public Slider healthSlider;
-    public float fillDuration = 2.5f;
+    [SerializeField] private GameObject bossUIPanel;
+    private Slider healthSlider;
+    [SerializeField] private float fillDuration = 2.5f;
 
     [Header("--- Cảnh báo (Warning) ---")]
-    public GameObject warningOverlay;
+    [SerializeField] private GameObject warningOverlay;
     [Tooltip("Tốc độ mờ/đậm của viền cảnh báo. Số càng to nháy càng nhanh.")]
-    public float warningFadeSpeed = 2f;
-    public AudioSource audioSource;
-    public AudioClip warningSound;
+    [SerializeField] private float warningFadeSpeed = 2f;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip warningSound;
 
     [Tooltip("THÊM MỚI: Thời gian phát âm thanh cảnh báo (giây) và hiệu ứng nháy đỏ.")]
-    public float warningSoundDuration = 2.5f;
+    [SerializeField] private float warningSoundDuration = 2.5f;
 
     [Header("--- Kết nối Skill Boss ---")]
-    public BossLaserSkill bossSkill;
-    public BossShieldSkill shieldSkill;
+    [SerializeField] private BossLaserSkill bossSkill;
+    [SerializeField] private BossShieldSkill shieldSkill;
 
     void Awake()
     {
