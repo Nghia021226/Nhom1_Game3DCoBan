@@ -5,21 +5,21 @@ using UnityEngine;
 public class BossShieldSkill : MonoBehaviour
 {
     [Header("--- Cài đặt Boss & Khiên ---")]
-    public Transform bossCenter;
-    public GameObject shieldObject;
-    public float shieldMaxSize = 3.0f;
-    public float scaleSpeed = 2.0f;
+    [SerializeField] Transform bossCenter;
+    [SerializeField] GameObject shieldObject;
+    [SerializeField] float shieldMaxSize = 3.0f;
+    [SerializeField] float scaleSpeed = 2.0f;
 
     [Header("--- Cài đặt Điểm Neo Tường ---")]
     public GameObject[] allWallAnchors;
-    public int anchorsToActivate = 3;
+    [SerializeField] int anchorsToActivate = 3;
 
     [Header("--- Cài đặt Dây ---")]
-    public GameObject beam3DPrefab;
+    [SerializeField] GameObject beam3DPrefab;
 
     [Header("--- Cài đặt Âm thanh ---")]
-    public AudioSource shieldAudioSource;
-    public AudioClip shieldActivateSound;
+    [SerializeField] AudioSource shieldAudioSource;
+    [SerializeField] AudioClip shieldActivateSound;
     [Range(0f, 1f)] public float shieldVolume = 1.0f;
 
     private List<GameObject> activeBeams = new List<GameObject>();

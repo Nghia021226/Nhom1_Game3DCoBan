@@ -2,41 +2,36 @@
 using UnityEngine;
 using TMPro;
 using Cinemachine;
-
-// 1. Tạo class nhỏ để chứa cả Chữ và File ghi âm
 [System.Serializable]
 public class DialogueData
 {
-    [TextArea] public string lineText; // Nội dung câu thoại
-    public AudioClip voiceClip;        // File âm thanh giọng nói
+    [TextArea] public string lineText; 
+    public AudioClip voiceClip;        
 }
 
 public class CheckPlayer : MonoBehaviour
 {
     [Header("--- Cài đặt Camera Cinematic ---")]
-    public CinemachineVirtualCamera bossVirtualCamera;
+    [SerializeField] CinemachineVirtualCamera bossVirtualCamera;
 
     [Header("--- Cài đặt UI Thoại ---")]
-    public GameObject dialoguePanel;
-    public TextMeshProUGUI dialogueText;
+    private GameObject dialoguePanel;
+    private TextMeshProUGUI dialogueText;
 
-    // 2. Thay đổi từ string[] sang mảng DialogueData mới
-    public DialogueData[] dialogueContent;
-    public GameObject skipButton; // Kéo nút Skip vào đây
+    private DialogueData[] dialogueContent;
+    [SerializeField] GameObject skipButton;
 
     [Header("--- Cài đặt Âm thanh ---")]
-    public AudioSource audioSource; // Dành cho lồng tiếng (Voice)
-
-    // THÊM MỚI: Biến chứa AudioSource dành riêng cho Nhạc Nền Boss
-    public AudioSource bgmAudioSource;
+    private AudioSource audioSource;
+    private AudioSource bgmAudioSource;
 
     [Header("--- Cài đặt Tốc độ Chữ ---")]
-    public float typingSpeed = 0.04f;
+    [SerializeField] float typingSpeed = 0.04f;
 
     [Header("--- Cài đặt Boss & Player ---")]
-    public MonoBehaviour bossSkillScript;
-    public MonoBehaviour playerMovement;
-    public BossHealth bossHealthScript;
+    [SerializeField] MonoBehaviour bossSkillScript;
+    [SerializeField] MonoBehaviour playerMovement;
+    [SerializeField] BossHealth bossHealthScript;
     private bool hasPlayed = false;
     private bool isSkipping = false;
 
@@ -134,7 +129,6 @@ public class CheckPlayer : MonoBehaviour
             bossSkillScript.SendMessage("StartFighting", SendMessageOptions.DontRequireReceiver);
         }
 
-        // THÊM MỚI: Bật nhạc nền Boss khi trận chiến bắt đầu
         if (bgmAudioSource != null)
         {
             bgmAudioSource.Play();
@@ -151,8 +145,6 @@ public class CheckPlayer : MonoBehaviour
             Debug.LogError("🚨 [CheckPlayer] LỖI CỰC MẠNH: bossHealthScript đang bị NULL!");
         }
     }
-
-    // THÊM MỚI: Hàm này được gọi từ script BossHealth khi Boss chết
     public void StopBossMusic()
     {
         if (bgmAudioSource != null && bgmAudioSource.isPlaying)

@@ -4,58 +4,58 @@ using UnityEngine;
 public class BossLaserSkill : MonoBehaviour
 {
     [Header("--- KẾT NỐI COMPONENT ---")]
-    [SerializeField] private BossShieldSkill shieldSkillScript;
+    [SerializeField] BossShieldSkill shieldSkillScript;
 
     [Header("--- PREFAB (VẬT THỂ) ---")]
-    [SerializeField] private GameObject warningZonePrefab;
-    [SerializeField] private GameObject laserPrefab;
+    [SerializeField] GameObject warningZonePrefab;
+    [SerializeField] GameObject laserPrefab;
 
     [Header("--- CHỈ SỐ KỸ NĂNG: MƯA LAZE ---")]
     [Tooltip("Số đợt bắn laze trong 1 lần Boss dùng chiêu này.")]
-    [SerializeField] private int wavesPerSkill = 15;
+    [SerializeField] int wavesPerSkill = 15;
     [Tooltip("Số lượng tia laze rơi xuống ngẫu nhiên trong MỖI đợt.")]
-    [SerializeField] private int lasersPerWave = 10;
+    [SerializeField] int lasersPerWave = 10;
     [Tooltip("Thời gian chờ giữa các đợt bắn laze (giây).")]
-    [SerializeField] private float waveInterval = 2.0f;
+    [SerializeField] float waveInterval = 2.0f;
 
     [Header("--- CHỈ SỐ THỜI GIAN & HÌNH ẢNH ---")]
     [Tooltip("Thời gian chờ từ lúc vòng cảnh báo hiện lên đến lúc laze thực sự rơi xuống (giây).")]
-    [SerializeField] private float warningDuration = 1.5f;
+    [SerializeField] float warningDuration = 1.5f;
     [Tooltip("Thời gian tia laze tồn tại trên màn hình trước khi biến mất (giây).")]
-    [SerializeField] private float laserLifeTime = 1.0f;
+    [SerializeField] float laserLifeTime = 1.0f;
     [Tooltip("Kích thước nở ra tối đa của vòng tròn cảnh báo.")]
-    [SerializeField] private float warningSize = 1.5f;
+    [SerializeField] float warningSize = 1.5f;
 
     [Header("--- TỌA ĐỘ & VỊ TRÍ ---")]
     [Tooltip("Chiều cao trên không trung mà tia laze sẽ xuất hiện để bắn thẳng xuống.")]
-    [SerializeField] private float laserSpawnHeight = 10.0f;
+    [SerializeField] float laserSpawnHeight = 10.0f;
     [Tooltip("Độ cao của vòng tròn cảnh báo nhô lên so với mặt đất (để tránh bị kẹt hình vào sàn).")]
-    [SerializeField] private float warningHeight = 0.5f;
+    [SerializeField] float warningHeight = 0.5f;
 
     [Space(10)] // Tạo một khoảng trống nhỏ cho dễ nhìn
     [Tooltip("Giới hạn bản đồ trục X (tối thiểu) để laze rơi ngẫu nhiên.")]
-    [SerializeField] private float minX = -10f;
+    [SerializeField] float minX = -10f;
     [Tooltip("Giới hạn bản đồ trục X (tối đa).")]
-    [SerializeField] private float maxX = 10f;
+    [SerializeField] float maxX = 10f;
     [Tooltip("Giới hạn bản đồ trục Z (tối thiểu) để laze rơi ngẫu nhiên.")]
-    [SerializeField] private float minZ = -10f;
+    [SerializeField] float minZ = -10f;
     [Tooltip("Giới hạn bản đồ trục Z (tối đa).")]
-    [SerializeField] private float maxZ = 10f;
+    [SerializeField] float maxZ = 10f;
 
     [Header("--- THỜI GIAN NGHỈ NHỊP CHUYỂN CHIÊU ---")]
     [Tooltip("Thời gian Boss đứng nghỉ ngơi sau khi xài xong 1 chiêu (giây).")]
-    [SerializeField] private float timeBetweenSkills = 5.0f;
+    [SerializeField] float timeBetweenSkills = 5.0f;
 
     [Header("--- ÂM THANH ---")]
     [Tooltip("Nguồn phát âm thanh gắn trên người Boss.")]
-    [SerializeField] private AudioSource audioSource;
+    [SerializeField] AudioSource audioSource;
     [Tooltip("File âm thanh tiếng 'bíp bíp' lúc cảnh báo đỏ.")]
-    [SerializeField] private AudioClip warningSound;
+    [SerializeField] AudioClip warningSound;
     [Tooltip("File âm thanh tiếng laze chớp xuống.")]
-    [SerializeField] private AudioClip laserSound;
+    [SerializeField] AudioClip laserSound;
     [Range(0f, 1f)]
     [Tooltip("Chỉnh âm lượng của các hiệu ứng âm thanh này (từ 0 đến 1).")]
-    [SerializeField] private float soundVolume = 0.3f;
+    [SerializeField] float soundVolume = 0.3f;
 
     private Vector3 initialWarningScale;
 
