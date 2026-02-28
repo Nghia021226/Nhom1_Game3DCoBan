@@ -11,23 +11,23 @@ public class BossHealth : MonoBehaviour, IDamageable
     private bool isInvulnerable = true;
 
     [Header("--- UI Thanh Máu ---")]
-    [SerializeField] private GameObject bossUIPanel;
+    [SerializeField] GameObject bossUIPanel;
     private Slider healthSlider;
-    [SerializeField] private float fillDuration = 2.5f;
+    [SerializeField] float fillDuration = 2.5f;
 
     [Header("--- Cảnh báo (Warning) ---")]
-    [SerializeField] private GameObject warningOverlay;
+    [SerializeField] GameObject warningOverlay;
     [Tooltip("Tốc độ mờ/đậm của viền cảnh báo. Số càng to nháy càng nhanh.")]
-    [SerializeField] private float warningFadeSpeed = 2f;
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip warningSound;
+    [SerializeField] float warningFadeSpeed = 2f;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip warningSound;
 
     [Tooltip("THÊM MỚI: Thời gian phát âm thanh cảnh báo (giây) và hiệu ứng nháy đỏ.")]
-    [SerializeField] private float warningSoundDuration = 2.5f;
+    [SerializeField] float warningSoundDuration = 2.5f;
 
     [Header("--- Kết nối Skill Boss ---")]
-    [SerializeField] private BossLaserSkill bossSkill;
-    [SerializeField] private BossShieldSkill shieldSkill;
+    [SerializeField] BossLaserSkill bossSkill;
+    [SerializeField] BossShieldSkill shieldSkill;
 
     void Awake()
     {
