@@ -6,6 +6,7 @@ public class bulletProjectTile : MonoBehaviour
     [SerializeField] private Transform vfxHitGreen;
     [SerializeField] private Transform vfxHitRed;
     [SerializeField] private float speed;
+    [SerializeField] private float damage = 25f;
 
     private void Awake()
     {
@@ -14,7 +15,6 @@ public class bulletProjectTile : MonoBehaviour
 
     private void Start()
     {
-        //float speed = 20f;
         bulletRigidbody.linearVelocity = transform.forward * speed;
     }
 
@@ -24,7 +24,7 @@ public class bulletProjectTile : MonoBehaviour
 
         if (victim != null)
         {
-            victim.TakeDamage(25f); 
+            victim.TakeDamage(damage); 
             if (vfxHitGreen != null) Instantiate(vfxHitGreen, transform.position, Quaternion.identity);
         }
         else

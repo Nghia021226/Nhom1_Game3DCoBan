@@ -10,7 +10,6 @@ public class EnemyResetHandler : MonoBehaviour
 
     void Start()
     {
-        // 1. Lưu lại vị trí và góc xoay ngay khi game bắt đầu
         _startPosition = transform.position;
         _startRotation = transform.rotation;
 
@@ -20,12 +19,10 @@ public class EnemyResetHandler : MonoBehaviour
 
     public void ResetEnemy()
     {
-        // 2. Dịch chuyển quái về vị trí gốc
-        // Lưu ý: Với NavMeshAgent, dùng .Warp sẽ chính xác và không bị lỗi vật lý
         if (_agent != null)
         {
             _agent.Warp(_startPosition);
-            _agent.ResetPath(); // Xóa lệnh đuổi cũ
+            _agent.ResetPath(); 
         }
         else
         {
@@ -34,7 +31,6 @@ public class EnemyResetHandler : MonoBehaviour
 
         transform.rotation = _startRotation;
 
-        // 3. Reset Animation về trạng thái nghỉ (Idle)
         if (_anim != null)
         {
             _anim.Rebind();

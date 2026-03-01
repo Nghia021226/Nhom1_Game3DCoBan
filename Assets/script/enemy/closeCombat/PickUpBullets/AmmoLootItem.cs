@@ -2,7 +2,7 @@
 
 public class AmmoLootItem : InteractableObject
 {
-    public int ammoAmount = 20;
+    [SerializeField] private int ammoAmount = 20;
     public override string GetHintText() => "Giữ E để nhặt đạn năng lượng";
 
     private void Awake()

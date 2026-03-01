@@ -22,9 +22,9 @@ public class EnemyStats : MonoBehaviour, IDamageable
     private Vector3 spawnPos;
     private Quaternion spawnRot;
 
-    [Header("Combat Settings (MỚI)")]
-    [SerializeField] private int maxStunTimes = 2; // Chỉ bị choáng 2 viên đầu
-    [SerializeField] private float stunResetTime = 5f; // Nếu không bị bắn trong 5s, sẽ reset lại giáp
+    [Header("Combat Settings")]
+    [SerializeField] private int maxStunTimes = 2; 
+    [SerializeField] private float stunResetTime = 5f; 
     private int currentStunCount = 0;
     private float lastHitTime = 0f;
 
@@ -42,22 +42,17 @@ public class EnemyStats : MonoBehaviour, IDamageable
     {
         if (isDead) return;
 
-        // 1. Luôn luôn trừ máu dù có bị choáng hay không
         currentHealth -= damage;
 
         if (behaviorAgent != null)
             behaviorAgent.SetVariableValue("IsDetected", true);
 
-        // 2. --- LOGIC MỚI: KIỂM TRA "SUPER ARMOR" ---
-
-        // Nếu đã lâu không bị bắn (ví dụ chạy trốn xong quay lại), thì reset lại khả năng bị choáng
         if (Time.time > lastHitTime + stunResetTime)
         {
             currentStunCount = 0;
         }
         lastHitTime = Time.time;
 
-        // Chỉ gọi Animation Stun nếu số lần bị bắn chưa vượt quá giới hạn
         if (currentStunCount < maxStunTimes)
         {
             currentStunCount++;
@@ -65,13 +60,9 @@ public class EnemyStats : MonoBehaviour, IDamageable
         }
         else
         {
-            // Nếu đã vượt quá giới hạn (viên thứ 3 trở đi):
-            // KHÔNG gọi HitStunRoutine() -> Quái sẽ KHÔNG đứng lại, KHÔNG diễn hoạt đau đớn
-            // Nó sẽ tiếp tục chạy thẳng vào mặt người chơi để tấn công
             Debug.Log("Quái đang nổi điên! Không bị choáng nữa!");
         }
-        // ---------------------------------------------
-
+     
         if (currentHealth <= 0) Die();
     }
 
@@ -79,7 +70,6 @@ public class EnemyStats : MonoBehaviour, IDamageable
     {
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
 
-        // Chỉ diễn hoạt Hit nếu chưa chết
         if (anim != null)
         {
             anim.SetBool("IsWalk", false);
@@ -87,13 +77,11 @@ public class EnemyStats : MonoBehaviour, IDamageable
             anim.SetTrigger("Hit");
         }
 
-        // Dừng di chuyển tạm thời
         if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
             agent.isStopped = true;
 
-        yield return new WaitForSeconds(0.2f); // Thời gian khựng lại ngắn thôi
+        yield return new WaitForSeconds(0.2f); 
 
-        // Sau khi khựng xong thì chạy tiếp ngay
         if (!isDead && agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
             agent.isStopped = false;
     }
@@ -169,9 +157,8 @@ public class EnemyStats : MonoBehaviour, IDamageable
             transform.rotation = spawnRot;
         }
 
-        // --- RESET LẠI TRẠNG THÁI KHI HỒI SINH ---
         currentHealth = data.maxHealth;
-        currentStunCount = 0; // Reset lại giáp choáng
+        currentStunCount = 0; 
         isDead = false;
 
         GetComponent<Collider>().enabled = true;
