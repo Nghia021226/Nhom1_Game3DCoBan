@@ -3,13 +3,13 @@ public class ShieldAnchor : MonoBehaviour, IDamageable
 {
     [Header("--- Cài đặt Máu (Neo) ---")]
     [SerializeField] float maxHealth = 100f;
-    [SerializeField] float currentHealth;
+    private float currentHealth;
 
     [Header("--- Âm thanh khi bị phá ---")]
     [SerializeField] AudioSource anchorAudioSource;
     [SerializeField] AudioClip[] breakSounds;
 
-    private BossShieldSkill bossShieldManager;
+    [SerializeField] BossShieldSkill bossShieldManager;
     private bool isDestroyed = false;
     public void Setup(BossShieldSkill manager)
     {

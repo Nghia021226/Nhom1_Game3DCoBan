@@ -5,14 +5,14 @@ using System.Collections;
 public class BossHealth : MonoBehaviour, IDamageable
 {
     [Header("--- Chỉ số Boss ---")]
-    [SerializeField] private float maxHealth = 1000f;
+    [SerializeField] float maxHealth = 1000f;
     private float currentHealth;
     private bool isDead = false;
     private bool isInvulnerable = true;
 
     [Header("--- UI Thanh Máu ---")]
     [SerializeField] GameObject bossUIPanel;
-    private Slider healthSlider;
+    [SerializeField] Slider healthSlider;
     [SerializeField] float fillDuration = 2.5f;
 
     [Header("--- Cảnh báo (Warning) ---")]

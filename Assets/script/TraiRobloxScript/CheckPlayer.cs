@@ -15,15 +15,15 @@ public class CheckPlayer : MonoBehaviour
     [SerializeField] CinemachineVirtualCamera bossVirtualCamera;
 
     [Header("--- Cài đặt UI Thoại ---")]
-    private GameObject dialoguePanel;
-    private TextMeshProUGUI dialogueText;
+    [SerializeField] GameObject dialoguePanel;
+    [SerializeField] TextMeshProUGUI dialogueText;
 
-    private DialogueData[] dialogueContent;
+    [SerializeField] DialogueData[] dialogueContent;
     [SerializeField] GameObject skipButton;
 
     [Header("--- Cài đặt Âm thanh ---")]
-    private AudioSource audioSource;
-    private AudioSource bgmAudioSource;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioSource bgmAudioSource;
 
     [Header("--- Cài đặt Tốc độ Chữ ---")]
     [SerializeField] float typingSpeed = 0.04f;
