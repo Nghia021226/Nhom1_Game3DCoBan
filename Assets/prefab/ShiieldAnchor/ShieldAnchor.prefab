@@ -160,7 +160,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.12704709, y: 0.016445495, z: 0.0021067155, w: 0.9917581}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5000001, z: 1.5}
+  m_LocalScale: {x: 1.4999996, y: 1.5000001, z: 1.4999996}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6377911339528298149}
@@ -253,12 +253,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 1
-  currentHealth: 0
   anchorAudioSource: {fileID: 0}
   breakSounds:
   - {fileID: 8300000, guid: 4996fe1cf35250d4b8642eb77b69e70c, type: 3}
   - {fileID: 8300000, guid: 1ddef23025744ef41934682e617117ec, type: 3}
-  explosionVFX: {fileID: 0}
+  bossShieldManager: {fileID: 0}
 --- !u!1001 &7441595776686319713
 PrefabInstance:
   m_ObjectHideFlags: 0
