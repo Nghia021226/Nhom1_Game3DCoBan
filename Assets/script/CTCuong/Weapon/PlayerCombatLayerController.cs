@@ -16,9 +16,6 @@ public class PlayerCombatLayerController : MonoBehaviour
     [Header("Cài đặt Animator Layer")]
     [SerializeField] private string combatLayerName = "Aim Layer";
 
-    
-   
-
     private int combatLayerIndex;
 
     void Start()
