@@ -37,7 +37,6 @@ public class BossShieldSkill : MonoBehaviour
             if (shieldCollider) shieldCollider.enabled = false;
         }
 
-        // Đổi var thành GameObject
         foreach (GameObject anchor in allWallAnchors)
         {
             if (anchor != null) anchor.SetActive(false);
@@ -78,11 +77,9 @@ public class BossShieldSkill : MonoBehaviour
                 anchor.SetActive(true);
                 currentActiveAnchors++;
 
-                // Đổi var thành ShieldAnchor chuẩn xác
                 ShieldAnchor anchorScript = anchor.GetComponent<ShieldAnchor>();
                 if (anchorScript == null) anchorScript = anchor.AddComponent<ShieldAnchor>();
 
-                // Hàm Setup này giờ sẽ kiêm luôn việc bơm lại đầy máu cho cái Neo
                 anchorScript.Setup(this);
 
                 StartCoroutine(SpawnSimpleBeam(anchor.transform));
@@ -120,15 +117,11 @@ public class BossShieldSkill : MonoBehaviour
     {
         if (beam3DPrefab == null || bossCenter == null) yield break;
 
-        // Đẻ ra tia sét mới
         GameObject beam = Instantiate(beam3DPrefab, anchorTransform.position, Quaternion.identity);
         activeBeams.Add(beam);
 
         beam.transform.LookAt(bossCenter);
 
-        // --- ĐIỂM QUAN TRỌNG ĐÃ SỬA Ở ĐÂY ---
-        // Thêm điều kiện: anchorTransform.gameObject.activeInHierarchy
-        // Nghĩa là: "Chỉ giữ tia sét khi cục Neo vẫn ĐANG HIỂN THỊ trên màn hình"
         while (isShieldActive && beam != null && anchorTransform != null && anchorTransform.gameObject.activeInHierarchy)
         {
             beam.transform.LookAt(bossCenter);
@@ -136,10 +129,9 @@ public class BossShieldSkill : MonoBehaviour
             yield return null;
         }
 
-        // Khi cục Neo bị bắn ẩn đi (SetActive = false), vòng lặp trên sẽ văng ra và chạy xuống đây: Hủy tia sét!
         if (beam != null)
         {
-            activeBeams.Remove(beam); // Dọn dẹp danh sách cho sạch sẽ
+            activeBeams.Remove(beam);
             Destroy(beam);
         }
     }
@@ -158,7 +150,6 @@ public class BossShieldSkill : MonoBehaviour
     {
         if (shieldCollider) shieldCollider.enabled = false;
 
-        // Đổi var thành GameObject
         foreach (GameObject beam in activeBeams)
         {
             if (beam != null) Destroy(beam);
