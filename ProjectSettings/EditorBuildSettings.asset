@@ -18,6 +18,9 @@ EditorBuildSettings:
     path: Assets/Scenes/uia.unity
     guid: 19c3ad42e3c90c6458c7257cd0330e6d
   - enabled: 1
+    path: Assets/Scenes/Maptest.unity
+    guid: 22411cbff4f20d8419ac891dc62f639f
+  - enabled: 0
     path: Assets/Scenes/LoginScene.unity
     guid: fbd19c87e920eb64085bfdb8cf8cd2f4
   m_configObjects:
