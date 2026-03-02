@@ -90,7 +90,6 @@ public class BossHealth : MonoBehaviour, IDamageable
             canvasGroup = warningOverlay.AddComponent<CanvasGroup>();
         }
 
-        // ĐÃ SỬA: Dùng warningSoundDuration để quyết định thời gian nháy UI thay cho fillDuration
         float endTime = Time.time + warningSoundDuration;
 
         while (Time.time < endTime)
