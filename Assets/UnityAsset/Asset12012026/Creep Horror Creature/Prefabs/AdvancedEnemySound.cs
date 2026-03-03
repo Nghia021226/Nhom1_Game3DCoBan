@@ -6,7 +6,7 @@ public class AdvancedEnemySound : MonoBehaviour
     [Tooltip("Kéo AudioSource chính vào đây (để phát tiếng đánh/ăn)")]
     [SerializeField] private AudioSource sfxSource;
 
-    // Loa tự tạo cho tiếng gầm
+   
     private AudioSource ambientSource;
 
     [Header("--- ÂM THANH MÔI TRƯỜNG (Gầm gừ) ---")]
@@ -14,10 +14,10 @@ public class AdvancedEnemySound : MonoBehaviour
     [Range(0f, 1f)] public float growlVolume = 0.6f;
 
     [Header("--- ÂM THANH CHIÊU THỨC ---")]
-    public AudioClip jumpAttackClip; // Nhảy
-    public AudioClip biteAttackClip; // Cắn
-    public AudioClip handAttackClip; // Đánh tay
-    public AudioClip eatClip;        // Ăn
+    public AudioClip jumpAttackClip; 
+    public AudioClip biteAttackClip;
+    public AudioClip handAttackClip; 
+    public AudioClip eatClip;        
 
     void Start()
     {
@@ -41,14 +41,14 @@ public class AdvancedEnemySound : MonoBehaviour
         ambientSource.volume = growlVolume;
         ambientSource.spatialBlend = 1f;
         ambientSource.minDistance = 2f;
-        ambientSource.maxDistance = 15f; // Xa quá 15m là không nghe thấy gầm
+        ambientSource.maxDistance = 15f; 
         ambientSource.rolloffMode = AudioRolloffMode.Linear;
         ambientSource.dopplerLevel = 0f;
 
         ambientSource.Play();
     }
 
-    // --- HÀM MỚI: TẮT/BẬT TIẾNG GẦM ---
+    
     public void ToggleGrowl(bool isEnable)
     {
         if (ambientSource == null) return;
@@ -90,7 +90,7 @@ public class AdvancedEnemySound : MonoBehaviour
         if (clipToPlay != null)
         {
             sfxSource.pitch = pitchRandom;
-            // PlayOneShot giúp âm thanh đè lên nhau mà không bị ngắt
+           
             sfxSource.PlayOneShot(clipToPlay);
         }
     }

@@ -9,12 +9,11 @@ public class MonsterAnimSync : MonoBehaviour
 
     void Start()
     {
-        // 1. Tìm NavMeshAgent (Ưu tiên tìm trên chính mình trước, rồi tìm ở cha/con)
         agent = GetComponent<NavMeshAgent>();
         if (agent == null) agent = GetComponentInParent<NavMeshAgent>();
         if (agent == null) agent = GetComponentInChildren<NavMeshAgent>();
 
-        // 2. Tìm Animator (Tìm khắp nơi: Bản thân -> Con -> Cha)
+        
         anim = GetComponent<Animator>();
         if (anim == null) anim = GetComponentInChildren<Animator>();
         if (anim == null) anim = GetComponentInParent<Animator>();
@@ -22,7 +21,7 @@ public class MonsterAnimSync : MonoBehaviour
         if (anim == null)
         {
             Debug.LogError("❌ LỖI RỒI BRO ƠI: Không tìm thấy Animator nào cả! Check lại model đi!");
-            this.enabled = false; // Tắt script để đỡ spam lỗi
+            this.enabled = false; 
             return;
         }
 
@@ -31,7 +30,7 @@ public class MonsterAnimSync : MonoBehaviour
             Debug.LogError("❌ LỖI: Không có NavMeshAgent!");
         }
 
-        // Đảm bảo tên biến trong Animator đúng là "Speed" (Viết hoa chữ S)
+        
         speedHash = Animator.StringToHash("Speed");
     }
 
@@ -39,10 +38,10 @@ public class MonsterAnimSync : MonoBehaviour
     {
         if (agent == null || anim == null) return;
 
-        // Lấy vận tốc
+        
         float currentSpeed = agent.velocity.magnitude;
 
-        // Đẩy vào Animator
+      
         anim.SetFloat(speedHash, currentSpeed);
     }
 }

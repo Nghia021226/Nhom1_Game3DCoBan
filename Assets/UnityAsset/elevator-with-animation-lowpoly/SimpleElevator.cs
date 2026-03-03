@@ -29,14 +29,14 @@ public class SimpleElevator : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Kiểm tra xem có phải Player chạm vào không và thang máy đang rảnh
+        
         if (other.CompareTag("Player") && !isUsing)
         {
             StartCoroutine(ElevatorRoutine(other.gameObject));
         }
     }
 
-    // Hàm riêng để ra lệnh mở cửa (Dùng cho thang máy đích)
+    
     public void OpenDoorOnly()
     {
         if (elevatorAnimator != null)
@@ -49,13 +49,13 @@ public class SimpleElevator : MonoBehaviour
     {
         isUsing = true;
 
-        // 1. Mở cửa cho Player bước vào
+        
         OpenDoorOnly();
 
-        // 2. Chờ Player đi vào và cửa đóng lại (theo thời gian tùy chỉnh)
+        
         yield return new WaitForSeconds(waitBeforeFade);
 
-        // 3. Hiệu ứng làm tối màn hình từ từ
+        
         if (blackScreen != null)
         {
             blackScreen.gameObject.SetActive(true);
@@ -66,25 +66,25 @@ public class SimpleElevator : MonoBehaviour
                 blackScreen.color = new Color(0, 0, 0, timer / fadeDuration);
                 yield return null;
             }
-            blackScreen.color = new Color(0, 0, 0, 1); // Đen kịt 100%
+            blackScreen.color = new Color(0, 0, 0, 1);
         }
 
-        // 4. DỊCH CHUYỂN PLAYER (Xử lý mượt để không kẹt CharacterController)
+        
         CharacterController cc = player.GetComponent<CharacterController>();
-        if (cc != null) cc.enabled = false; // Tắt tạm để dịch chuyển không bị giật ngược
+        if (cc != null) cc.enabled = false; 
 
         player.transform.position = destination.position;
-        player.transform.rotation = destination.rotation; // Xoay mặt Player nhìn ra cửa luôn
+        player.transform.rotation = destination.rotation; 
 
-        if (cc != null) cc.enabled = true; // Bật lại
+        if (cc != null) cc.enabled = true; 
 
-        // 5. Báo cho thang máy đích tự mở cửa ra
+        
         if (destinationElevator != null)
         {
             destinationElevator.OpenDoorOnly();
         }
 
-        // 6. Sáng màn hình lên lại
+        
         if (blackScreen != null)
         {
             float timer = 0;
@@ -95,10 +95,10 @@ public class SimpleElevator : MonoBehaviour
                 yield return null;
             }
             blackScreen.color = new Color(0, 0, 0, 0);
-            blackScreen.gameObject.SetActive(false); // Ẩn luôn cho nhẹ máy
+            blackScreen.gameObject.SetActive(false); 
         }
 
-        // Xong xuôi, reset trạng thái
+        
         isUsing = false;
     }
 }

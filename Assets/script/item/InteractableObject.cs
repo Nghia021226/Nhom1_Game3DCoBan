@@ -9,7 +9,7 @@ public class InteractableObject : MonoBehaviour
     public enum ItemType { None, Battery, HealthPotion, KeyCard, Chip, BlueKey, GateCard, Meat }
 
     [Header("--- SOUND EFFECTS (Mới) ---")]
-    public AudioClip interactSound; // Kéo âm thanh nhặt/tương tác vào đây
+    public AudioClip interactSound; 
 
     [Header("--- QUEST MARKER ---")]
     public GameObject questMarker;
@@ -51,7 +51,7 @@ public class InteractableObject : MonoBehaviour
         if (questMarker != null) questMarker.SetActive(true);
     }
 
-    // --- HÀM PHÁT ÂM THANH TIỆN LỢI ---
+    
     public void PlayInteractSound()
     {
         if (interactSound != null)
@@ -59,8 +59,7 @@ public class InteractableObject : MonoBehaviour
             AudioSource.PlayClipAtPoint(interactSound, transform.position, 1f);
         }
     }
-    // ----------------------------------
-
+   
     public virtual string GetHintText()
     {
         if (type == ObjectType.Item) return "Giữ E để nhặt " + specificItemType.ToString();
@@ -109,7 +108,7 @@ public class InteractableObject : MonoBehaviour
             {
                 if (petScript != null)
                 {
-                    PlayInteractSound(); // Âm thanh thuần phục
+                    PlayInteractSound(); 
                     petScript.TamePet();
                     GameManager.instance.RemoveCurrentItem();
 
@@ -147,7 +146,7 @@ public class InteractableObject : MonoBehaviour
 
             if (success)
             {
-                PlayInteractSound(); // <--- PHÁT ÂM THANH NHẶT ĐỒ
+                PlayInteractSound(); 
                 Destroy(gameObject);
             }
         }
@@ -157,7 +156,7 @@ public class InteractableObject : MonoBehaviour
         {
             if (GameManager.instance.IsHoldingItem(ItemType.Battery))
             {
-                PlayInteractSound(); // Âm thanh lắp pin
+                PlayInteractSound(); 
                 isComputerOn = true;
                 if (screenCanvas != null) screenCanvas.SetActive(true);
                 if (passwordText != null) passwordText.text = "PASSWORD\n" + passwordContent;
