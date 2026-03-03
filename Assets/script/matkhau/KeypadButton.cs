@@ -16,11 +16,11 @@ public class KeypadButton : MonoBehaviour
         if (rend != null) originalColor = rend.material.color;
     }
 
-    // Khi di chuột vào -> Đổi màu chút cho biết đang chọn
+    
     void OnMouseEnter()
     {
         if (GameManager.instance.isUsingKeypad && rend != null)
-            rend.material.color = Color.yellow; // Hoặc màu gì bro thích
+            rend.material.color = Color.yellow; 
     }
 
     void OnMouseExit()
@@ -28,14 +28,14 @@ public class KeypadButton : MonoBehaviour
         if (rend != null) rend.material.color = originalColor;
     }
 
-    // Khi bấm chuột -> Gửi số về Controller
+    
     void OnMouseDown()
     {
         if (GameManager.instance.isUsingKeypad && controller != null)
         {
             controller.InputNumber(number);
 
-            // Hiệu ứng bấm (nháy màu)
+           
             if (rend != null)
             {
                 rend.material.color = Color.green;

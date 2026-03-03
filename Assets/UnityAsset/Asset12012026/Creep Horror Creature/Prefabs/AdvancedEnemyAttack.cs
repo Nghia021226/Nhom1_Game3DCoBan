@@ -17,9 +17,9 @@ public class AdvancedEnemyAttack : MonoBehaviour
     [SerializeField] private float attackTriggerTime = 0.3f;
 
     [Tooltip("Tiếng ĂN tính từ % này (Chỉnh cao lên để Delay, ví dụ 0.5)")]
-    [SerializeField] private float eatTriggerTime = 0.5f; // MỚI: Delay riêng cho Ăn ✅
+    [SerializeField] private float eatTriggerTime = 0.5f; 
 
-    // --- BIẾN NỘI BỘ ---
+
     private Transform player;
     private Animator enemyAnimator;
     private AdvancedEnemySound enemySound;
@@ -28,7 +28,7 @@ public class AdvancedEnemyAttack : MonoBehaviour
     private bool _hasTriggeredThisLoop;
     private int _lastLoopCount;
 
-    // Biến để quản lý trạng thái gầm
+
     private bool _isSuppressingGrowl = false;
 
     private int _isAttackHash;
@@ -66,17 +66,17 @@ public class AdvancedEnemyAttack : MonoBehaviour
 
         AnimatorStateInfo stateInfo = enemyAnimator.GetCurrentAnimatorStateInfo(0);
 
-        // --- 1. NHẬN DIỆN ---
+       
         bool isAttackParam = _hasIsAttackParameter && enemyAnimator.GetBool(_isAttackHash);
         bool isAttack = isAttackParam || stateInfo.IsName("Attack") || CheckName(stateInfo, "Attack") || CheckName(stateInfo, "Jump") || CheckName(stateInfo, "Bite");
         bool isEating = CheckName(stateInfo, "Eat");
 
-        // --- 2. XỬ LÝ TẮT TIẾNG GẦM KHI ĂN ---
+      
         if (isEating)
         {
             if (!_isSuppressingGrowl)
             {
-                // Mới bắt đầu ăn -> Tắt gầm
+              
                 if (enemySound) enemySound.ToggleGrowl(false);
                 _isSuppressingGrowl = true;
             }
@@ -85,13 +85,13 @@ public class AdvancedEnemyAttack : MonoBehaviour
         {
             if (_isSuppressingGrowl)
             {
-                // Vừa ăn xong -> Bật gầm lại
+                
                 if (enemySound) enemySound.ToggleGrowl(true);
                 _isSuppressingGrowl = false;
             }
         }
 
-        // --- 3. XỬ LÝ LOGIC HÀNH ĐỘNG ---
+       
         if (isAttack || isEating)
         {
             if (!_isActionActive)
@@ -101,7 +101,7 @@ public class AdvancedEnemyAttack : MonoBehaviour
                 _lastLoopCount = (int)stateInfo.normalizedTime;
             }
 
-            // Reset Loop (cho tiếng Ăn lặp lại)
+          
             int currentLoop = (int)stateInfo.normalizedTime;
             if (currentLoop > _lastLoopCount)
             {
@@ -109,27 +109,25 @@ public class AdvancedEnemyAttack : MonoBehaviour
                 _lastLoopCount = currentLoop;
             }
 
-            // Tính thời gian % animation (0.0 -> 1.0)
+        
             float currentTime = stateInfo.normalizedTime % 1f;
 
-            // --- QUAN TRỌNG: CHỌN MỐC THỜI GIAN RIÊNG ---
+           
             float triggerPoint = isEating ? eatTriggerTime : attackTriggerTime;
 
-            // Kích hoạt (Chỉ chạy 1 lần mỗi loop khi đạt đúng thời điểm)
+            
             if (!_hasTriggeredThisLoop && currentTime >= triggerPoint)
             {
                 _hasTriggeredThisLoop = true;
 
                 if (isEating)
                 {
-                    // Phát tiếng Ăn
-                    // Debug.Log("<color=green>NHỒM NHOÀM...</color>");
+                    
                     if (enemySound) enemySound.PlayAttackSound("Eat");
                 }
                 else
                 {
-                    // Phát tiếng Đánh + Trừ Máu
-                    // (Lưu ý: Tiếng đánh được gọi TRƯỚC khi check khoảng cách -> Nên đánh gió vẫn phải kêu)
+                   
                     float dmg = CalculateDamageAndSound(stateInfo);
                     CheckAttackHit(dmg);
                 }
@@ -149,7 +147,7 @@ public class AdvancedEnemyAttack : MonoBehaviour
     {
         string name = GetStateName(stateInfo).ToLower();
 
-        // Code này đảm bảo tiếng kêu LUÔN PHÁT ra dù có trúng hay không
+        
         if (name.Contains("jump"))
         {
             if (enemySound) enemySound.PlayAttackSound("Jump");

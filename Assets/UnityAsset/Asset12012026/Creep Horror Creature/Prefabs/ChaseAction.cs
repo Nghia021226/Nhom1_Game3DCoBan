@@ -36,7 +36,7 @@ public partial class ChaseAction : Action
 
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
-            return Status.Success; // Đã đến gần, dừng lại để đánh
+            return Status.Success; 
         }
 
         return Status.Running;

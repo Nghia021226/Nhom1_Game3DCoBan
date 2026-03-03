@@ -5,9 +5,8 @@ public class MonsterSenses : MonoBehaviour
 {
     [Header("Cài đặt")]
     public float detectionRadius = 15f;
-    // Bỏ dòng LayerMask playerLayer cũ đi
-    public LayerMask foodLayer; // Vẫn giữ layer cho đồ ăn
-    public string playerTag = "Player"; // <--- TÌM BẰNG TAG
+    public LayerMask foodLayer; 
+    public string playerTag = "Player"; 
 
     private BehaviorGraphAgent behaviorAgent;
 
@@ -21,36 +20,33 @@ public class MonsterSenses : MonoBehaviour
         if (behaviorAgent == null) return;
 
         DetectFood();
-        DetectPlayerByTag(); // Gọi hàm mới
+        DetectPlayerByTag(); 
     }
 
-    // Hàm mới: Tìm Player bằng Tag (Bất chấp Layer nào)
+    
     void DetectPlayerByTag()
     {
         GameObject foundPlayer = null;
 
-        // Quét tất cả vật thể xung quanh trong bán kính
         Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius);
 
         foreach (var hit in hits)
         {
-            // Kiểm tra Tag
             if (hit.CompareTag(playerTag))
             {
                 foundPlayer = hit.gameObject;
-                break; // Tìm thấy rồi thì dừng loop ngay
+                break; 
             }
         }
 
-        // Cập nhật vào Graph (Nếu tìm thấy thì gán Player, không thì gán null)
+        
         if (foundPlayer != null)
         {
             behaviorAgent.SetVariableValue("TargetPlayer", foundPlayer);
         }
         else
         {
-            // Dòng này chính là thủ phạm làm mất Player trong Inspector nếu không tìm thấy
-            // Nhưng giờ code tìm đúng Tag rồi nên nó sẽ giữ nguyên
+            
             behaviorAgent.SetVariableValue("TargetPlayer", (GameObject)null);
         }
     }
