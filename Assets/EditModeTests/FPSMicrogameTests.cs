@@ -3,6 +3,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 
+
 namespace EditModeTests
 {
     public class MockHealth
@@ -52,24 +53,145 @@ namespace EditModeTests
                 m_IsDead = true;
             }
         }
+
+    }
+
+    public class MockWeaponController
+    {
+        public string WeaponName;
+        public GameObject SourcePrefab;
+        public int ClipSize;
+        public int CurrentAmmo;
+        public bool IsWeaponActive;
+        public GameObject Owner;
+
+        public MockWeaponController(string weaponName, int clipSize, GameObject sourcePrefab)
+        {
+            WeaponName = weaponName;
+            SourcePrefab = sourcePrefab;
+            ClipSize = clipSize;
+            CurrentAmmo = clipSize;
+        }
+
+        public void ShowWeapon(bool show)
+        {
+            IsWeaponActive = show;
+        }
+    }
+
+    public class MockPlayerWeaponsManager
+    {
+        MockWeaponController[] m_WeaponSlots = new MockWeaponController[9];
+        public int ActiveWeaponIndex { get; private set; } = -1;
+
+        public bool AddWeapon(MockWeaponController weaponPrefab)
+        {
+            if(HasWeapon(weaponPrefab) != null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < m_WeaponSlots.Length; i++)
+            {
+                if (m_WeaponSlots[i] == null)
+                {
+                    m_WeaponSlots[i] = weaponPrefab;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public MockWeaponController GetWeaponAtSlotIndex(int index)
+        {
+            if(index >= 0 && index < m_WeaponSlots.Length)
+            {
+                return m_WeaponSlots[index];
+            }
+            return null;
+        }
+
+        public MockWeaponController HasWeapon(MockWeaponController weaponPrefab)
+        {
+            for(int i = 0; i< m_WeaponSlots.Length; i++)
+            {
+                if (m_WeaponSlots[i] != null && m_WeaponSlots[i].SourcePrefab == weaponPrefab.SourcePrefab)
+                {
+                    return m_WeaponSlots[i];
+                }
+            }
+            return null;
+        }
+
+        public bool RemoveWeapon(MockWeaponController weaponInstance)
+        {
+            for (int i = 0; i < m_WeaponSlots.Length; i++)
+            {
+                if (m_WeaponSlots[i] == weaponInstance)
+                {
+                    m_WeaponSlots[i] = null;
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public class MockEnemyKillEvent 
+    {
+        public GameObject Enemy;
+        public int RemainingEnemyCount;
+    }
+
+    public class MockObjectiveKillEnemies
+    {
+        public bool MustKillAllEnemies = true;
+        public int KillsToCompleteObjective = 5;
+
+        public bool IsCompleted {  get; private set; }
+
+        int m_KillTotal;
+
+        public int KillTotal => m_KillTotal;
+
+        public void OnEnemyKilled(MockEnemyKillEvent evt)
+        {
+            if (IsCompleted)
+            {
+                return;
+            }
+            m_KillTotal++;
+
+            if (MustKillAllEnemies)
+            {
+                KillsToCompleteObjective = evt.RemainingEnemyCount + m_KillTotal;
+            }
+
+            int targetRemaining = MustKillAllEnemies ? evt.RemainingEnemyCount : KillsToCompleteObjective - m_KillTotal;
+
+            if(targetRemaining == 0)
+            {
+                IsCompleted = true;
+            }
+        }
+    }
+
+    public class FPSMicrogamesTests
+    {
+        readonly System.Collections.Generic.List<Object> m_TestObjects = new System.Collections.Generic.List<Object>();
+
+        [TearDown]
+        public void TearDowm()
+        {
+            foreach(Object obj in m_TestObjects)
+            {
+                if(obj != null)
+                {
+                    Object.DestroyImmediate(obj);
+                }
+            }
+            m_TestObjects.Clear();
+        }
     }
 }
-//public class FPSMicrogameTests
-//{
-//    // A Test behaves as an ordinary method
-//    [Test]
-//    public void FPSMicrogameTestsSimplePasses()
-//    {
-//        // Use the Assert class to test conditions
-//    }
 
-//    // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-//    // `yield return null;` to skip a frame.
-//    [UnityTest]
-//    public IEnumerator FPSMicrogameTestsWithEnumeratorPasses()
-//    {
-//        // Use the Assert class to test conditions.
-//        // Use yield to skip a frame.
-//        yield return null;
-//    }
-//}
