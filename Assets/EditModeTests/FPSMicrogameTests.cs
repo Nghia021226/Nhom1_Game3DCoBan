@@ -183,14 +183,91 @@ namespace EditModeTests
         [TearDown]
         public void TearDowm()
         {
-            foreach(Object obj in m_TestObjects)
+            foreach (Object obj in m_TestObjects)
             {
-                if(obj != null)
+                if (obj != null)
                 {
                     Object.DestroyImmediate(obj);
                 }
             }
             m_TestObjects.Clear();
+        }
+
+        [Test]
+        public void TestScore()
+        {
+            MockObjectiveKillEnemies objective = new MockObjectiveKillEnemies();
+            objective.MustKillAllEnemies = false;
+            objective.KillsToCompleteObjective = 3;
+
+            Assert.AreEqual(0, objective.KillTotal);
+            Assert.IsFalse(objective.IsCompleted);
+
+            MockEnemyKillEvent evt1 = new MockEnemyKillEvent { Enemy = null, RemainingEnemyCount = 2 };
+            objective.OnEnemyKilled(evt1);
+            Assert.AreEqual(1, objective.KillTotal);
+            Assert.IsFalse(objective.IsCompleted);
+
+            MockEnemyKillEvent evt2 = new MockEnemyKillEvent { Enemy = null, RemainingEnemyCount = 1 };
+            objective.OnEnemyKilled(evt2);
+            Assert.AreEqual(2, objective.KillTotal);
+            Assert.IsFalse(objective.IsCompleted);
+
+            MockEnemyKillEvent evt3 = new MockEnemyKillEvent { Enemy = null, RemainingEnemyCount = 0 };
+            objective.OnEnemyKilled(evt3);
+            Assert.AreEqual(3, objective.KillTotal);
+            Assert.IsTrue(objective.IsCompleted);
+        }
+
+        [Test]
+        public void TestPlayerHealth()
+        {
+            MockHealth health = new MockHealth(100f);
+            Assert.AreEqual(100f,health.CurrentHealth);
+            Assert.IsFalse(health.IsDead);
+
+            health.TakeDamage(30f,null);
+            Assert.AreEqual(70f, health.CurrentHealth);
+            Assert.IsFalse(health.IsDead);
+
+            health.TakeDamage(80f, null);
+            Assert.AreEqual(0f, health.CurrentHealth);
+            Assert.IsTrue(health.IsDead);
+
+            health.TakeDamage(10f, null);
+            Assert.AreEqual(0f,health.CurrentHealth);
+            Assert.IsTrue(health.IsDead);
+        }
+
+        [Test]
+        public void TestWeaponInventory()
+        {
+            MockPlayerWeaponsManager weaponsManager = new MockPlayerWeaponsManager();
+            Assert.IsNull(weaponsManager.GetWeaponAtSlotIndex(0));
+
+            GameObject blasterPrefab = new GameObject("BlasterPrefab");
+            m_TestObjects.Add(blasterPrefab);
+            MockWeaponController balster = new MockWeaponController("Blaster", 7, blasterPrefab);
+            bool added = weaponsManager.AddWeapon(balster);
+            Assert.IsTrue(added);
+            Assert.IsNotNull(weaponsManager.GetWeaponAtSlotIndex(0));
+            Assert.AreEqual("Blaster",weaponsManager.GetWeaponAtSlotIndex(0).WeaponName);
+            Assert.IsNotNull(weaponsManager.HasWeapon(balster));
+
+            bool duplicate = weaponsManager.AddWeapon(balster);
+            Assert.IsFalse(duplicate);
+
+            GameObject shotgunPrefab = new GameObject("ShotgunPrefab");
+            m_TestObjects.Add(shotgunPrefab);
+            MockWeaponController shotgun = new MockWeaponController("Shotgun", 5, shotgunPrefab);
+            Assert.IsNull(weaponsManager.HasWeapon(shotgun));
+            weaponsManager.AddWeapon(shotgun);
+            Assert.IsNotNull(weaponsManager.HasWeapon(shotgun));
+            Assert.AreEqual("Shotgun",weaponsManager.GetWeaponAtSlotIndex(1).WeaponName);
+
+            bool removed = weaponsManager.RemoveWeapon(balster);
+            Assert.IsTrue(removed);
+            Assert.IsNull(weaponsManager.GetWeaponAtSlotIndex(0));
         }
     }
 }
