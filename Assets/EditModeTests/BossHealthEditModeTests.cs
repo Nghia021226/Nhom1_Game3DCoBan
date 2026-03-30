@@ -54,10 +54,8 @@ public class BossHealthEditModeTests
         Assert.AreEqual(initialHealth - damageAmount, currentHealth, "Máu của Boss phải bị trừ chính xác số lượng lượng sát thương nhận vào.");
     }
 
-    // =========================================================================
     // Các hàm Hỗ Trợ (Reflection Helper) dùng C# Reflection 
     // Giúp truy xuất, thiết lập và gọi hàm mà không bị phụ thuộc Assenbly
-    // =========================================================================
 
     private void SetPrivateField(string fieldName, object value)
     {
